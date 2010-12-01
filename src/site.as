@@ -66,7 +66,7 @@
 				onAdProgress: onAdProgress				
 			};
 			
-			var vk_info:VK = new VK(paramters, onUserInfoGet, onUserInfoGetError); 
+			var vk_info:VK = new VK(parameters, onUserInfoGet, onUserInfoGetError); 
 			vk_info.getUserData();
 			
 		}
