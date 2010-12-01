@@ -1,17 +1,24 @@
 ﻿package
 {
+	import adriver.VK;
 	import adriver.adriverLoader;
+	
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	
 	public class site extends MovieClip
 	{
+		
+		private var parameters:Object;
+		private var callbacks:Object;
+		
+		
 		public function site()
 		{
 			super();
 			this.addEventListener( Event.ADDED_TO_STAGE, onAddedToStage ); 
 		}
-
+		
 		private function onAddedToStage(e: Event): void { 
 
 			var vkontakte_wrapper: Object = Object(parent.parent); 
@@ -27,7 +34,7 @@
 				};
 			}
 			
-			var parameters:Object = {
+			parameters = {
 				
 				social_network: "vkontakte",
 				vk_secret: "JNi8W1YXui",
@@ -48,11 +55,9 @@
 					
 				message:message
 					
-				
-					
 			};
 			
-			var callbacks:Object = {
+			callbacks = {
 				onAdStarted: onAdStarted,
 				onAdFinished: onAdFinished,
 				onAdFailed: onAdFailed,
@@ -60,10 +65,22 @@
 				onAdSkipped: onAdSkipped,
 				onAdProgress: onAdProgress				
 			};
-				
-			// parameters += get_vkontakte_socdem(secret)
 			
-			new adriverLoader(mc_with_ad, parameters, callbacks);
+			var vk_info:VK = new VK(paramters, onUserInfoGet, onUserInfoGetError); 
+			vk_info.getUserData();
+			
+		}
+		
+		private function onUserInfoGet(event:Event, userInfo):void {
+			trace("User info here");
+			parameters.user = userInfo;
+			new adriverLoader(mc_with_ad, parameters, callbacks);	
+		}
+		
+		private function onUserInfoGetError(event:Event, userInfo):void {
+			trace("User info here");
+			parameters.user = userInfo;
+			new adriverLoader(mc_with_ad, parameters, callbacks);	
 		}
 		
 		private function onAdStarted(event:Event):void {

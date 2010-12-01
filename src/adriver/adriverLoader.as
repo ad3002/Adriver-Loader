@@ -35,49 +35,12 @@
 			_stage = mc.root;
 			_secret = parameters.secret;
 			
-			var paramObj:Object = parameters.flashVars;
-			
-			printTrace(paramObj, "\nflashVars: ")
-			
-			if (parameters.social_network == VKONTAKTE) {
-				var user_data:VK = new VK(parameters, onUserData, onUserDataError);
-				user_data.getUserData();
-			} else {
-				trace("Else in a social network select");
-			}
-
-			mc.addChild(this);
-		}
-		
-		private function printTrace(obj:Object, mesage:String)
-		{	
-			parameters.message.text += mesage;
-			for (var i in obj) {
-				parameters.message.text += "   " + i + " = "+obj[i]+"\n";
-			}
-		}
-		
-		private function onUserData(user_params:Object):void {
-			parameters.user = user_params;
-			printTrace(user_params, "\nOk UserVars: ")
-			defCall();
-		}
-		
-		private function onUserDataError(event:Event, user_params:Object):void {
-			trace(event);
-			parameters.user = user_params;
-			printTrace(user_params, "\nError UserVars: ")
-			defCall();
-		}
-		
-		
-		private function defCall(type:String = PREGAME):void {
-			
-			if (type == PREGAME) {
+			if (parameters.social_network == PREGAME) {
 				loadAd();
 			} else {
 				loadAd();	
 			}
+			mc.addChild(this);
 		}
 		
 		public function loadAd():void {

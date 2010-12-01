@@ -8,7 +8,6 @@
 	
 	public class VK extends Sprite
 	{
-		
 		private var onload:Function;
 		private var onerror:Function;
 		private var params:Object;
@@ -36,8 +35,8 @@
 		// private functions
 		
 		private function getVKRequest(p:Object):void {
+			
 			var reqParams:Object = {}
-				
 			for (var i in p) { 
 				reqParams[i] = p[i]; 
 			}
@@ -46,7 +45,6 @@
 			reqParams['api_id'] = parameters.flashVars.api_id;
 			
 			var signature = generateSignature(parameters.flashVars.viewer_id, reqParams, parameters.vk_secret);
-			
 			var req:String = parameters.flashVars.api_url + '?sig=' + signature
 			
 			for (i in reqParams) {
@@ -68,8 +66,7 @@
 			loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			loader.addEventListener(Event.COMPLETE, completeHandler);
 			
-		}
-		
+		}		
 		
 		private function generateSignature(viewerId, params:Object, apiSecret:String):String {
 			var a:Array = [];
@@ -106,8 +103,6 @@
 				parameters.message.text += "Could not parse the XML file.";
 				trace("Could not parse the XML file.");
 			}
-			
-			
 		}
 		
 		private function httpStatusHandler(event:HTTPStatusEvent):void {
@@ -121,7 +116,6 @@
 		private function ioErrorHandler(event:IOErrorEvent):void {
 			trace("ioErrorHandler: " + event);
 			parameters.message.text += "\nVK error event=" + event;
-			
 			onerror(event, params);
 		}
 		
