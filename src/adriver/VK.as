@@ -1,25 +1,24 @@
 ﻿package adriver
 {
+	import adriver.SocialEvent;
+	
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.*;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
+	
 	public class VK extends Sprite
 	{
-		private var onload:Function;
-		private var onerror:Function;
 		private var params:Object;
 		private var _secret:String;
 		private var paramObj;
 		private var parameters:Object;
 		
-		public function VK(app_parameters:Object, call_onload:Function, call_onerror:Function)
+		public function VK(app_parameters:Object)
 		{
 			super();
-			onload = call_onload as Function;
-			onerror = call_onerror as Function;
 			params = {
 				fields: 'bdate,sex,education,city,country,rate', 
 				method: 'getProfiles'
@@ -35,6 +34,14 @@
 		// private functions
 		
 		private function getVKRequest(p:Object):void {
+			
+			if (!parameters.flashVars) {
+				trace("Wrong flashVars");
+				dispatchEvent(new SocialEvent(SocialEvent.FLASHVARS_ERROR, params));
+				dispatchEvent(new SocialEvent(SocialEvent.ERROR, params));
+				return
+			}
+			
 			
 			var reqParams:Object = {}
 			for (var i in p) { 
@@ -116,7 +123,7 @@
 		private function ioErrorHandler(event:IOErrorEvent):void {
 			trace("ioErrorHandler: " + event);
 			parameters.message.text += "\nVK error event=" + event;
-			onerror(event, params);
+			dispatchEvent(new SocialEvent(SocialEvent.ERROR, params));
 		}
 		
 		private function openHandler(event:Event):void {
@@ -139,9 +146,9 @@
 				params.city_name = params.city_name.toLowerCase();
 			}
 			
-			var names = ['sex', 'bdate', 'city' , 'country', 'rate' /*, 'education'*/];
+			var names:Object = ['sex', 'bdate', 'city' , 'country', 'rate' /*, 'education'*/];
 			
-			for (var i=0; i<names.length; i++){
+			for (var i:uint=0; i<names.length; i++){
 				var v = getXChild(x, names[i]);
 				if (v) params[names[i]] = v;
 			}
@@ -156,7 +163,7 @@
 				return;
 			}
 			
-			onload(params);
+			dispatchEvent(new SocialEvent(SocialEvent.USER_LOADED, params));
 			
 		}
 		
