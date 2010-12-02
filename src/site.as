@@ -1,5 +1,7 @@
 ﻿package
 {
+	import adriver.AdriverEvent;
+	import adriver.SocialEvent;
 	import adriver.VK;
 	import adriver.adriverLoader;
 	
@@ -10,8 +12,6 @@
 	{
 		
 		private var parameters:Object;
-		private var callbacks:Object;
-		
 		
 		public function site()
 		{
@@ -24,14 +24,8 @@
 			var vkontakte_wrapper: Object = Object(parent.parent); 
 			
 			if (!vkontakte_wrapper.application) {
-				vkontakte_wrapper["application"] = {parameters:{
-											secret:"",
-											api_id:"",
-											uids:"",
-											api_url:"",
-											viewer_id:""
-				}				
-				};
+				vkontakte_wrapper.application = [];
+				vkontakte_wrapper.application.parameters = null;
 			}
 			
 			parameters = {
@@ -51,36 +45,41 @@
 				adriver: {
 					sid: 103134	
 				},
-
 					
 				message:message
 					
 			};
 			
-			callbacks = {
-				onAdStarted: onAdStarted,
-				onAdFinished: onAdFinished,
-				onAdFailed: onAdFailed,
-				onAdLoaded: onAdLoaded,
-				onAdSkipped: onAdSkipped,
-				onAdProgress: onAdProgress				
-			};
+			var vk_info:VK = new VK(parameters); 
+			addChild(vk_info);
 			
-			var vk_info:VK = new VK(parameters, onUserInfoGet, onUserInfoGetError); 
+			vk_info.addEventListener(SocialEvent.USER_LOADED, onUserInfo);
+			vk_info.addEventListener(SocialEvent.ERROR, onUserInfoError);
+			vk_info.addEventListener(SocialEvent.FLASHVARS_ERROR, onUserInfoError);
+			
 			vk_info.getUserData();
 			
 		}
 		
-		private function onUserInfoGet(event:Event, userInfo):void {
+		private function onUserInfo(event:SocialEvent):void {
 			trace("User info here");
-			parameters.user = userInfo;
-			new adriverLoader(mc_with_ad, parameters, callbacks);	
+			parameters.user = event.profile;
+			
+			addEventListener(AdriverEvent.STARTED, onAdStarted);
+			addEventListener(AdriverEvent.FINISHED, onAdFinished);
+			addEventListener(AdriverEvent.FAILED, onAdFailed);
+			addEventListener(AdriverEvent.LOADED, onAdLoaded);
+			addEventListener(AdriverEvent.SKIPPED, onAdSkipped);
+			addEventListener(AdriverEvent.PROGRESS, onAdProgress);
+			
+			new adriverLoader(mc_with_ad, parameters);
+			
 		}
 		
-		private function onUserInfoGetError(event:Event, userInfo):void {
-			trace("User info here");
-			parameters.user = userInfo;
-			new adriverLoader(mc_with_ad, parameters, callbacks);	
+		private function onUserInfoError(event:SocialEvent):void {
+			trace("User info error" + event);
+			parameters.user = event.profile;
+			new adriverLoader(mc_with_ad, parameters);	
 		}
 		
 		private function onAdStarted(event:Event):void {
