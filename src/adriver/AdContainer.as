@@ -51,10 +51,6 @@
 			super();
 			parameters = given_parameters;
 			
-			req  = 'http://ad.adriver.ru/cgi-bin/xmerle.cgi?' + parameters.ad_scenario_prarams;
-			
-			parameters.message.text += "Full url: " + req + "\n";
-			
 			//Stage.align = 'TL';
 			//Stage.scaleMode = 'noScale';
 			//Stage.addListener({onResize:resizer});
@@ -67,8 +63,6 @@
 				skip_button.addEventListener(MouseEvent.CLICK, onSkipClick);
 			}
 			resizer();
-			getBanners();
-			
 		}
 		
 		private function resizer()
@@ -81,40 +75,8 @@
 			trace("Event: ad skipped \n");
 		}
 		
-		private function getBanners():void
-		{
-			new getObjectFromXML(req, onXMLLoad);
-		}
 		
-		private function onXMLLoad(obj:Object):void
-		{
-			trace(obj.xml);
-			trace(obj.xml.content_image);
-			trace(obj.xml.content_image.localUrl[0]);
-			trace(obj.xml.content_image.locationUrl[0]);
-			
-			videoURL = obj.flv;
-			var image_url = obj.image;
-			var swf_url = obj.swf;
-			
-			trace(videoURL);
-			trace(image_url);
-			trace(swf_url);
-			if (videoURL) {
-				trace("Show video")
-				showVideo();	
-			}
-			if (image_url) {
-				trace("Show umage")
-				loadBanner(image_url, 10, 10)	
-			} 
-			if (swf_url) {
-				trace("Show swf")
-				loadBanner(swf_url, 10, 10)
-			}
-			
-			
-		}
+		
 		
 		public function loadBanner(url:String, x:int, y:int) {
 			

@@ -1,8 +1,10 @@
 ﻿package adriver
 {
 	
-	import adriver.VK;
 	import adriver.AdContainer;
+	import adriver.VK;
+	import adriver.getObjectFromXML;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
@@ -12,11 +14,15 @@
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 
 	public class adriverLoader extends Loader
 	{
 		private const PREGAME:String = "pregame";
 		private const VKONTAKTE:String = "vkontakte";
+		
+		private const ADRIVER_URL = "http://ad.adriver.ru/cgi-bin/xmerle.cgi?";
 		
 		private var req:String;
 		private var _stage:Object;
@@ -24,7 +30,7 @@
 		private var mc:MovieClip;
 		private var parameters:Object;
 		
-		function adriverLoader(gmc:MovieClip, p:Object, callbacks:Object){
+		public function adriverLoader(gmc:MovieClip, p:Object){
 			
 			parameters = p; 
 			mc = gmc;
@@ -43,65 +49,91 @@
 			mc.addChild(this);
 		}
 		
-		public function loadAd():void {
+		private function loadAd():void {
 			
-			var custom:Object = [];
-			var a:String;
+			// create request to adriver
+			
+			var custom_list:Object = [];
+			var param_custom:String;
 			var now:Number = new Date().getFullYear();
 			
-			custom[100] = parameters.user.sex ? parameters.user.sex == 2 ? 'm' : 'f' : null;
-			custom[101] = now - (parseInt(('' + parameters.user.bdate).split('.').pop()) || now);
-			custom[10] = parameters.user.city_name;
-			custom[11] = parameters.user.country_name;
-			custom[12] = parameters.user.rate;
-			
-			custom.getStd = function(){
-				for( var i=0,j, s=[]; i<this.length; i++) {
-					if (this[i]) { 
-						s.push( (!j?(j=1,i+'='):'')+escape(this[i]))
-					} else {
-						j=0
-					}
-				}
-				return s.length?'&custom='+s.join(';'):''
-			};
-			
-			
-			if (custom.getStd()) {
-				a = custom.getStd();
-			} 
+			custom_list[100] = parameters.user.sex ? parameters.user.sex == 2 ? 'm' : 'f' : null;
+			custom_list[101] = now - (parseInt(('' + parameters.user.bdate).split('.').pop()) || now);
+			custom_list[10] = parameters.user.city_name;
+			custom_list[11] = parameters.user.country_name;
+			custom_list[12] = parameters.user.rate;
+			param_custom = get_right_custom(custom_list);
+			 
 
-			trace("Custom "+a+"\n");
-			parameters.ad_scenario_prarams = "bt=54&rnd="+Math.round(Math.random()*100000000)+"&sid="+parameters.adriver.sid + "&ad=131439"+ a; //+"&custom=10=sydney;%u0430%u0432%u0441%u0442%u0440%u0430%u043B%u0438%u044F;87;100=m;2006"
-			trace("Loader:"+parameters.ad_scenario_prarams+"\n");
+			var param_sid:String = "&sid=" + parameters.adriver.sid;
+			var param_adriver:String = "bt=54&rnd=" + Math.round(Math.random()*100000000);
 			
-			var ad:AdContainer = new AdContainer(parameters);
-			mc.addChild(ad);
+			var adriver_parameters:String;
 			
-		}
-				
-		// Public methods
-		
-		public function getVKUser(secret:String):void {
+			if (param_custom) {
+				adriver_parameters = param_adriver + param_sid + param_custom;	
+			} else {
+				adriver_parameters = param_adriver + param_sid;
+			}
 			
-		}
-		
-		public function getOdnoklassnikiUser(secret:String):void {
+			trace("Adriver parameters: "+adriver_parameters+"\n");
 			
-		}
-		
-		public function getMailruUser(secret:String):void {
+			parameters.adriver_url = ADRIVER_URL + adriver_parameters;
+			
+			parameters.message.text += "Full url: " + parameters.adriver_url + "\n";
+			
+			new getObjectFromXML(parameters.adriver_url, onScenarioXMLLoad);
 			
 		}
 		
-		public function getFacebookUser(secret:String):void {
+		private function get_right_custom(custom:Object):String {
 			
+			var j:int;
+			var s:Object = [];
+			
+			for ( var i:int=0; i < custom.length; i++) {
+				if (custom[i]) { 
+					s.push( (!j?(j=1,i+'='):'')+escape(custom[i]))
+				} else {
+					j=0
+				}
+			}	
+			return s.length?'&custom_list='+s.join(';'):''
 		}
 		
-		public function getMyspaceUser(secret:String):void {
+		private function onScenarioXMLLoad(obj:Object):void
+		{
+			var video_url:String = obj.flv;
+			var image_url:String = obj.image;
+			var swf_url:String = obj.swf;
+			var pixel1_url:String = obj.pixel1;
+			var pixel2_url:String = obj.pixel2;
 			
+			if (pixel1_url) {
+				var request:URLRequest = new URLRequest(pixel1_url);
+				var loader:URLLoader = new URLLoader();
+				loader.load(request);
+			}
+			
+			if (pixel2_url) {
+				var request:URLRequest = new URLRequest(pixel2_url);
+				var loader:URLLoader = new URLLoader();
+				loader.load(request);
+			}
+			
+			if (video_url) {
+				trace("Show video")
+				//showVideo();	
+			}
+			if (image_url) {
+				trace("Show image")
+				//loadBanner(image_url, 10, 10)	
+			} 
+			if (swf_url) {
+				trace("Show swf")
+				//loadBanner(swf_url, 10, 10)
+			}
 		}
-		
 		
 	}
 }
