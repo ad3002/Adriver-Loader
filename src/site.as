@@ -33,7 +33,7 @@
 				social_network: "vkontakte",
 				vk_secret: "JNi8W1YXui",
 				flashVars: vkontakte_wrapper.application.parameters,
-				skip_button: true,
+				skip_button: sb,
 				user: {
 					uid: 1,
 					gender: 2,

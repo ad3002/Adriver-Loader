@@ -42,7 +42,6 @@
 		private var connection:NetConnection;
 		private var stream:NetStream;
 		
-		private var skip_button:SimpleButton; 
 		private var parameters:Object;
 		
 		private var _parent:Object;
@@ -57,11 +56,9 @@
 			//Stage.addListener({onResize:resizer});
 			
 			if (parameters.skip_button) {
-				skip_button = new SimpleButton();
-				skip_button.x = 300;
-				skip_button.y = 30;
-				addChild(skip_button);
-				skip_button.addEventListener(MouseEvent.CLICK, onSkipClick);
+				trace("Button init");
+				parameters.skip_button.x = -1000;
+				parameters.skip_button.y = 0;
 			}
 			resizer();
 		    
@@ -72,11 +69,31 @@
 			
 		}
 		
+		private function onVideoClick(event:MouseEvent):void
+		{
+			
+		}
+		
+		private function onSWFClick(event:MouseEvent):void
+		{
+			
+		}
+		
 		private function onSkipClick(event:MouseEvent):void
 		{
-			trace("Event: ad skipped \n");
+			//trace("Event: ad skipped \n");
+			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
+		
+		private function onVideoSkipClick(event:MouseEvent):void
+		{
+			//trace("Event: ad skipped \n");
+			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onVideoSkipClick);
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
+		}
+		
+		
 		
 		public function loadBanner(url:String, x:int, y:int) {
 			
@@ -89,6 +106,9 @@
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
+			
+			loader.addEventListener(MouseEvent.CLICK, onSWFClick);
+			
 			
 		}
 		
@@ -105,6 +125,15 @@
 		private function completeHandler(event:Event):void {
 			//trace("completeHandler: " + event + "\n");
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
+			
+			if (parameters.skip_button) {
+				trace("Button showed");
+				
+				parameters.skip_button.x = event.target.width;
+				parameters.skip_button.y = event.target.height - parameters.skip_button.height;
+				parameters.skip_button.addEventListener(MouseEvent.CLICK, onSkipClick);
+				
+			}
 		}
 		
 		private function httpStatusHandler(event:HTTPStatusEvent):void {
@@ -156,6 +185,11 @@
 					trace("Unable to locate video: " + videoURL);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 					break;
+				case "NetStream.Play.Failed":
+					trace("Play failed: " + videoURL);
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
+				case "NetStream.Play.Complete":
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));	
 			}
 		}
 		
@@ -163,30 +197,21 @@
 			var stream:NetStream = new NetStream(connection);
 			stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
-			stream.addEventListener(NetStatusEvent.NET_STATUS, onStreamStatus);
 			var video:Video = new Video();
 			video.attachNetStream(stream);
 			stream.play(videoURL);
 			addChild(video);
-		}
-		
-		private function onStreamStatus(event:NetStatusEvent):void {
-			switch (event.info.code) {
-				case "NetConnection.Connect.Success":
-					connectStream();
-					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.STARTED));
-					break;
-				case "NetStream.Play.StreamNotFound":
-					trace("Unable to locate video: " + videoURL);
-					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
-					break;
-				case "NetStream.Play.Failed":
-					trace("Play failed: " + videoURL);
-					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
-				case "NetStream.Play.Complete":
-					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));		
+			
+			video.addEventListener(MouseEvent.CLICK, onVideoClick);
+			
+			if (parameters.skip_button) {
+				parameters.skip_button.x = video.width - parameters.skip_button.width;
+				parameters.skip_button.y = video.height - parameters.skip_button.height;
+				parameters.skip_button.removeEventListener(MouseEvent.CLICK, onVideoSkipClick);
+				_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 			}
 		}
+	
 		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			trace("securityErrorHandler: " + event);

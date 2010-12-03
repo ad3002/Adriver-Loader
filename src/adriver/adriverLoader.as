@@ -112,6 +112,7 @@
 			
 			image_url = "http://217.16.18.206/images/0000783/0000783234/0/popUnder300x250.swf";
 			
+			
 			if (video_url || image_url || swf_url) {
 				var ad_cont:AdContainer = new AdContainer(parameters, this);
 				this.addChild(ad_cont);
