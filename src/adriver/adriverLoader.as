@@ -51,8 +51,9 @@
 		
 		private function _loadAd():void {
 			
-			// create request to adriver
 			
+			// create request to adriver
+      
 			var custom_list:Object = [];
 			var param_custom:String;
 			var now:Number = new Date().getFullYear();
@@ -62,21 +63,28 @@
 			custom_list[10] = parameters.user.city_name;
 			custom_list[11] = parameters.user.country_name;
 			custom_list[12] = parameters.user.rate;
+			//custom_list[13] = parameters.flashVars.viewer_id;
+			
 			param_custom = get_right_custom(custom_list);
-			 
-
-			var param_sid:String = "&sid=" + parameters.adriver.sid;
-			var param_adriver:String = "bt=54&rnd=" + Math.round(Math.random()*100000000);
+			
+			// build adriver params
+			var b = [], i=0, adriverParms="";
+			for (i in parameters.adriver) {
+			b.push(i + '=' + escape(parameters.adriver[i]));
+			}
+			b.push("bt=54");
+			b.push("rnd="+Math.round(Math.random()*100000000));
+			adriverParms = b.join('&');
+			
+			
 			
 			var adriver_parameters:String;
 			
 			if (param_custom) {
-				adriver_parameters = param_adriver + param_sid + param_custom;	
-			} else {
-				adriver_parameters = param_adriver + param_sid;
-			}
+			adriverParms += param_custom;  
+			} 
 			
-			parameters.adriver_url = ADRIVER_URL + adriver_parameters;
+			parameters.adriver_url = ADRIVER_URL + adriverParms;
 			
 			// DEBUG
 			//parameters.message.text += "Full url: " + parameters.adriver_url + "\n";
@@ -110,7 +118,7 @@
 				loader.load(request);
 			}
 			
-			image_url = "http://217.16.18.206/images/0000783/0000783234/0/popUnder300x250.swf";
+			//image_url = "http://217.16.18.206/images/0000783/0000783234/0/popUnder300x250.swf";
 			
 			
 			if (video_url || image_url || swf_url) {
