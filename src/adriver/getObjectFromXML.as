@@ -14,6 +14,7 @@
 		public function getObjectFromXML(url:String, onload:Function)
 		{
 		
+			trace("XML: "+url);
 			var o = {
 				ar_stages_trg: [0,0,0,0,0,0,0,0,0,0],
 				repRnd: function(u:String){

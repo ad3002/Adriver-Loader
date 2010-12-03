@@ -96,6 +96,8 @@
 		
 		private function onScenarioXMLLoad(obj:Object):void
 		{
+			var click_url:String;
+			
 			var video_url:String = obj.flv;
 			var image_url:String = obj.image;
 			var swf_url:String = obj.swf;
@@ -127,18 +129,18 @@
 			}
 			
 			if (video_url) {
-				trace("Show video: "+ video_url)
-				ad_cont.showVideo();	
+				trace("Show video: "+ video_url);
+				ad_cont.showVideo(video_url, click_url);	
 			} 
 			
 			if (image_url) {
-				trace("Show image: " + image_url)
-				ad_cont.loadBanner(image_url, 0, 0)
+				trace("Show image: " + image_url);
+				ad_cont.loadBanner(image_url, 0, 0, click_url);
 			}
 			
 			if (swf_url) {
 				trace("Show swf: " + swf_url)
-				ad_cont.loadBanner(swf_url, 0, 0)
+				ad_cont.loadBanner(swf_url, 0, 0, click_url)
 			}
 		}
 		

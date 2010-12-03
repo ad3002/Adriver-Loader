@@ -20,6 +20,7 @@
 	import flash.net.URLRequest;
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
+	import flash.net.navigateToURL;
 	
 	
 	
@@ -45,6 +46,9 @@
 		private var parameters:Object;
 		
 		private var _parent:Object;
+		private var _video_url:String;
+		private var _click_url:String;
+		
 		
 		public function AdContainer(given_parameters:Object, mc)
 		{
@@ -71,12 +75,14 @@
 		
 		private function onVideoClick(event:MouseEvent):void
 		{
-			
+			var url:URLRequest = new URLRequest(_click_url);
+			navigateToURL(url, "_blank"); 
 		}
 		
 		private function onSWFClick(event:MouseEvent):void
 		{
-			
+			var url:URLRequest = new URLRequest(_click_url);
+			navigateToURL(url, "_blank"); 
 		}
 		
 		private function onSkipClick(event:MouseEvent):void
@@ -95,7 +101,9 @@
 		
 		
 		
-		public function loadBanner(url:String, x:int, y:int) {
+		public function loadBanner(url:String, x:int, y:int, click_url:String) {
+			
+			_click_url = click_url;
 			
 			var loader:Loader = new Loader();
 			configureListeners(loader.contentLoaderInfo);
@@ -168,8 +176,10 @@
 			//loader.unload();
 		}
 		
-		public function showVideo():void
+		public function showVideo(url:String, click_url:String):void
 		{
+			_video_url = url;
+			_click_url = click_url;
 			connection = new NetConnection();
 			connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
@@ -182,11 +192,11 @@
 					connectStream();
 					break;
 				case "NetStream.Play.StreamNotFound":
-					trace("Unable to locate video: " + videoURL);
+					trace("Unable to locate video: " + _video_url);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 					break;
 				case "NetStream.Play.Failed":
-					trace("Play failed: " + videoURL);
+					trace("Play failed: " + _video_url);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 				case "NetStream.Play.Complete":
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));	
@@ -199,7 +209,7 @@
 			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
 			var video:Video = new Video();
 			video.attachNetStream(stream);
-			stream.play(videoURL);
+			stream.play(_video_url);
 			addChild(video);
 			
 			video.addEventListener(MouseEvent.CLICK, onVideoClick);
