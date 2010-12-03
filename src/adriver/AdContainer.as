@@ -45,12 +45,13 @@
 		private var skip_button:SimpleButton; 
 		private var parameters:Object;
 		
+		private var _parent:Object;
 		
-		public function AdContainer(given_parameters:Object)
+		public function AdContainer(given_parameters:Object, mc)
 		{
 			super();
 			parameters = given_parameters;
-			
+			_parent = mc;
 			//Stage.align = 'TL';
 			//Stage.scaleMode = 'noScale';
 			//Stage.addListener({onResize:resizer});
@@ -63,6 +64,7 @@
 				skip_button.addEventListener(MouseEvent.CLICK, onSkipClick);
 			}
 			resizer();
+		    
 		}
 		
 		private function resizer()
@@ -73,10 +75,8 @@
 		private function onSkipClick(event:MouseEvent):void
 		{
 			trace("Event: ad skipped \n");
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
-		
-		
-		
 		
 		public function loadBanner(url:String, x:int, y:int) {
 			
@@ -103,37 +103,40 @@
 		}
 		
 		private function completeHandler(event:Event):void {
-			trace("completeHandler: " + event + "\n");
+			//trace("completeHandler: " + event + "\n");
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
 		}
 		
 		private function httpStatusHandler(event:HTTPStatusEvent):void {
-			trace("httpStatusHandler: " + event + "\n");
+			//trace("httpStatusHandler: " + event + "\n");
 		}
 		
 		private function initHandler(event:Event):void {
-			trace("initHandler: " + event + "\n");
+			//trace("initHandler: " + event + "\n");
 		}
 		
 		private function ioErrorHandler(event:IOErrorEvent):void {
-			trace("ioErrorHandler: " + event + "\n");
+			//trace("ioErrorHandler: " + event + "\n");
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
 		private function openHandler(event:Event):void {
-			trace("openHandler: " + event + "\n");
+			//trace("openHandler: " + event + "\n");
 		}
 		
 		private function progressHandler(event:ProgressEvent):void {
-			trace("progressHandler: bytesLoaded=" + event.bytesLoaded + " bytesTotal=" + event.bytesTotal + "\n");
+			//trace("progressHandler: bytesLoaded=" + event.bytesLoaded + " bytesTotal=" + event.bytesTotal + "\n");
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.PROGRESS));
 		}
 		
 		private function unLoadHandler(event:Event):void {
-			trace("unLoadHandler: " + event + "\n");
+			//trace("unLoadHandler: " + event + "\n");
 		}
 		
 		private function clickHandler(event:MouseEvent):void {
-			trace("clickHandler: " + event + "\n");
-			var loader:Loader = Loader(event.target);
-			loader.unload();
+			//trace("clickHandler: " + event + "\n");
+			//var loader:Loader = Loader(event.target);
+			//loader.unload();
 		}
 		
 		public function showVideo():void
@@ -151,6 +154,7 @@
 					break;
 				case "NetStream.Play.StreamNotFound":
 					trace("Unable to locate video: " + videoURL);
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 					break;
 			}
 		}
@@ -159,14 +163,34 @@
 			var stream:NetStream = new NetStream(connection);
 			stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
+			stream.addEventListener(NetStatusEvent.NET_STATUS, onStreamStatus);
 			var video:Video = new Video();
 			video.attachNetStream(stream);
 			stream.play(videoURL);
 			addChild(video);
 		}
 		
+		private function onStreamStatus(event:NetStatusEvent):void {
+			switch (event.info.code) {
+				case "NetConnection.Connect.Success":
+					connectStream();
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.STARTED));
+					break;
+				case "NetStream.Play.StreamNotFound":
+					trace("Unable to locate video: " + videoURL);
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
+					break;
+				case "NetStream.Play.Failed":
+					trace("Play failed: " + videoURL);
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
+				case "NetStream.Play.Complete":
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));		
+			}
+		}
+		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			trace("securityErrorHandler: " + event);
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
 		private function asyncErrorHandler(event:AsyncErrorEvent):void {

@@ -102,7 +102,9 @@
 
 					o.init();
 					
-					if (onload is Function) onload(o);
+					if (onload is Function) {
+						onload(o);
+					}
 				});
 			});
 		}

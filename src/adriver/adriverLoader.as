@@ -9,15 +9,15 @@
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
 
-	public class adriverLoader extends Loader
+
+	public class adriverLoader extends Sprite
 	{
 		private const PREGAME:String = "pregame";
 		private const VKONTAKTE:String = "vkontakte";
@@ -26,30 +26,30 @@
 		
 		private var req:String;
 		private var _stage:Object;
-		private var _secret:String;
-		private var mc:MovieClip;
+		private var _mc:MovieClip;
 		private var parameters:Object;
 		
-		public function adriverLoader(gmc:MovieClip, p:Object){
+		public function adriverLoader(mc:MovieClip, p:Object){
+			
+			super();
 			
 			parameters = p; 
-			mc = gmc;
+			_mc = mc;
+			_stage = _mc.root;
 			
-			parameters.message.text += "Loaded.";
-			super();
-
-			_stage = mc.root;
-			_secret = parameters.secret;
-			
-			if (parameters.social_network == PREGAME) {
-				loadAd();
-			} else {
-				loadAd();	
-			}
 			mc.addChild(this);
 		}
 		
-		private function loadAd():void {
+		public function loadAd():void {
+			
+			if (parameters.social_network == PREGAME) {
+				_loadAd();
+			} else {
+				_loadAd();	
+			}
+		}
+		
+		private function _loadAd():void {
 			
 			// create request to adriver
 			
@@ -76,15 +76,70 @@
 				adriver_parameters = param_adriver + param_sid;
 			}
 			
-			trace("Adriver parameters: "+adriver_parameters+"\n");
-			
 			parameters.adriver_url = ADRIVER_URL + adriver_parameters;
 			
-			parameters.message.text += "Full url: " + parameters.adriver_url + "\n";
+			// DEBUG
+			//parameters.message.text += "Full url: " + parameters.adriver_url + "\n";
 			
 			new getObjectFromXML(parameters.adriver_url, onScenarioXMLLoad);
 			
+			
 		}
+		
+		private function onScenarioXMLLoad(obj:Object):void
+		{
+			var video_url:String = obj.flv;
+			var image_url:String = obj.image;
+			var swf_url:String = obj.swf;
+			var pixel1_url:String = obj.pixel1;
+			var pixel2_url:String = obj.pixel2;
+			
+			if (pixel1_url) {
+				var request:URLRequest = new URLRequest(pixel1_url);
+				var loader:URLLoader = new URLLoader();
+				loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
+				loader.addEventListener(Event.COMPLETE, completeHandlerPixel);
+				loader.load(request);
+			}
+			
+			if (pixel2_url) {
+				var request:URLRequest = new URLRequest(pixel2_url);
+				var loader:URLLoader = new URLLoader();
+				loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
+				loader.addEventListener(Event.COMPLETE, completeHandlerPixel);
+				loader.load(request);
+			}
+			
+			image_url = "http://217.16.18.206/images/0000783/0000783234/0/popUnder300x250.swf";
+			
+			if (video_url || image_url || swf_url) {
+				var ad_cont:AdContainer = new AdContainer(parameters, this);
+				this.addChild(ad_cont);
+			}
+			
+			if (video_url) {
+				trace("Show video: "+ video_url)
+				ad_cont.showVideo();	
+			} 
+			
+			if (image_url) {
+				trace("Show image: " + image_url)
+				ad_cont.loadBanner(image_url, 0, 0)
+			}
+			
+			if (swf_url) {
+				trace("Show swf: " + swf_url)
+				ad_cont.loadBanner(swf_url, 0, 0)
+			}
+		}
+		
+		private function ioErrorHandlerPixel(event:IOErrorEvent):void {
+			trace("Pixel load error: " + event + "\t'n" + event.target.url);
+		} 
+		
+		private function completeHandlerPixel(event:IOErrorEvent):void {
+			trace("Pixel load complete: "+ event.target.url);
+		}		
 		
 		private function get_right_custom(custom:Object):String {
 			
@@ -99,40 +154,6 @@
 				}
 			}	
 			return s.length?'&custom_list='+s.join(';'):''
-		}
-		
-		private function onScenarioXMLLoad(obj:Object):void
-		{
-			var video_url:String = obj.flv;
-			var image_url:String = obj.image;
-			var swf_url:String = obj.swf;
-			var pixel1_url:String = obj.pixel1;
-			var pixel2_url:String = obj.pixel2;
-			
-			if (pixel1_url) {
-				var request:URLRequest = new URLRequest(pixel1_url);
-				var loader:URLLoader = new URLLoader();
-				loader.load(request);
-			}
-			
-			if (pixel2_url) {
-				var request:URLRequest = new URLRequest(pixel2_url);
-				var loader:URLLoader = new URLLoader();
-				loader.load(request);
-			}
-			
-			if (video_url) {
-				trace("Show video")
-				//showVideo();	
-			}
-			if (image_url) {
-				trace("Show image")
-				//loadBanner(image_url, 10, 10)	
-			} 
-			if (swf_url) {
-				trace("Show swf")
-				//loadBanner(swf_url, 10, 10)
-			}
 		}
 		
 	}

@@ -11,13 +11,14 @@ package adriver
 		public static const SKIPPED:String = "skipped";
 		public static const PROGRESS:String = "progress";
 		
-		public function AdriverEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		
+		public function AdriverEvent(type:String)
 		{
-			super(type, bubbles, cancelable);
+			super(type);
 		}
 		
 		public override  function clone():Event {
-			return new AdriverEvent(type, bubbles, cancelable);
+			return new AdriverEvent(type);
 		}
 	}
 }

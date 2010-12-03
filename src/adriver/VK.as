@@ -38,7 +38,6 @@
 			if (!parameters.flashVars) {
 				trace("Wrong flashVars");
 				dispatchEvent(new SocialEvent(SocialEvent.FLASHVARS_ERROR, params));
-				dispatchEvent(new SocialEvent(SocialEvent.ERROR, params));
 				return
 			}
 			
@@ -58,7 +57,7 @@
 				req += '&' + i + '=' + reqParams[i];
 			}
 			
-			parameters.message.text += "\nVK URL="+req;
+			//parameters.message.text += "\nVK URL="+req;
 			var request:URLRequest = new URLRequest(req);
 			var loader:URLLoader = new URLLoader();
 			
@@ -81,10 +80,10 @@
 				a.push(key + "=" + params[key]);
 			}
 			
-			parameters.message.text += "\nSignature: ";
-			parameters.message.text += " vid "+ (viewerId > 0 ? viewerId.toString() : '') + "\n";
-			parameters.message.text += " params "+ a.sort().join('') + "\n";
-			parameters.message.text += " secret "+ apiSecret + "\n";
+			//parameters.message.text += "\nSignature: ";
+			//parameters.message.text += " vid "+ (viewerId > 0 ? viewerId.toString() : '') + "\n";
+			//parameters.message.text += " params "+ a.sort().join('') + "\n";
+			//parameters.message.text += " secret "+ apiSecret + "\n";
 			
 			return MD5.encrypt((viewerId > 0 ? viewerId.toString() : '') + a.sort().join('') + apiSecret);
 		}
@@ -103,11 +102,11 @@
 			trace(event.target.data);
 			
 			try {
-				parameters.message.text += "\nVK response=" + event.target.data;
+				//parameters.message.text += "\nVK response=" + event.target.data;
 				var xml = new XML(event.target.data);
 				parseParams(xml);    
 			} catch (e:TypeError) {
-				parameters.message.text += "Could not parse the XML file.";
+				//parameters.message.text += "Could not parse the XML file.";
 				trace("Could not parse the XML file.");
 			}
 		}
@@ -122,7 +121,7 @@
 		
 		private function ioErrorHandler(event:IOErrorEvent):void {
 			trace("ioErrorHandler: " + event);
-			parameters.message.text += "\nVK error event=" + event;
+			//parameters.message.text += "\nVK error event=" + event;
 			dispatchEvent(new SocialEvent(SocialEvent.ERROR, params));
 		}
 		

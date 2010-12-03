@@ -44,9 +44,7 @@
 		
 				adriver: {
 					sid: 103134	
-				},
-					
-				message:message
+				}
 					
 			};
 			
@@ -65,21 +63,32 @@
 			trace("User info here");
 			parameters.user = event.profile;
 			
+			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
+			mc_with_ad.addChild(ad);
+			
 			addEventListener(AdriverEvent.STARTED, onAdStarted);
 			addEventListener(AdriverEvent.FINISHED, onAdFinished);
 			addEventListener(AdriverEvent.FAILED, onAdFailed);
 			addEventListener(AdriverEvent.LOADED, onAdLoaded);
 			addEventListener(AdriverEvent.SKIPPED, onAdSkipped);
 			addEventListener(AdriverEvent.PROGRESS, onAdProgress);
+			ad.loadAd();
 			
-			new adriverLoader(mc_with_ad, parameters);
 			
 		}
 		
 		private function onUserInfoError(event:SocialEvent):void {
 			trace("User info error" + event);
 			parameters.user = event.profile;
-			new adriverLoader(mc_with_ad, parameters);	
+			
+			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
+			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);
+			ad.addEventListener(AdriverEvent.FINISHED, onAdFinished);
+			ad.addEventListener(AdriverEvent.FAILED, onAdFailed);
+			ad.addEventListener(AdriverEvent.LOADED, onAdLoaded);
+			ad.addEventListener(AdriverEvent.SKIPPED, onAdSkipped);
+			ad.addEventListener(AdriverEvent.PROGRESS, onAdProgress);
+			ad.loadAd();	
 		}
 		
 		private function onAdStarted(event:Event):void {
