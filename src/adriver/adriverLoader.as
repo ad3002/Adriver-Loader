@@ -12,10 +12,10 @@
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
+	import flash.events.MouseEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-
 
 	public class adriverLoader extends Sprite
 	{
@@ -36,8 +36,17 @@
 			parameters = p; 
 			_mc = mc;
 			_stage = _mc.root;
-			
 			mc.addChild(this);
+			
+//			this.x = parameters.style.x;
+//			this.x = parameters.style.y;
+//			this.height = parameters.style.height;
+//			this.width = parameters.style.width;
+//			this.graphics.lineStyle(3,0x00ff00);
+//			this.graphics.beginFill(0x0000FF);
+//			this.graphics.drawRect(0,0,this.width,this.height);
+//			this.graphics.endFill();
+			
 		}
 		
 		public function loadAd():void {
@@ -51,9 +60,7 @@
 		
 		private function _loadAd():void {
 			
-			
 			// create request to adriver
-      
 			var custom_list:Object = [];
 			var param_custom:String;
 			var now:Number = new Date().getFullYear();
@@ -63,7 +70,7 @@
 			custom_list[10] = parameters.user.city_name;
 			custom_list[11] = parameters.user.country_name;
 			custom_list[12] = parameters.user.rate;
-			//custom_list[13] = parameters.flashVars.viewer_id;
+			custom_list[13] = parameters.flashVars.viewer_id;
 			
 			param_custom = get_right_custom(custom_list);
 			
@@ -76,12 +83,9 @@
 			b.push("rnd="+Math.round(Math.random()*100000000));
 			adriverParms = b.join('&');
 			
-			
-			
 			var adriver_parameters:String;
-			
 			if (param_custom) {
-			adriverParms += param_custom;  
+				adriverParms += param_custom;  
 			} 
 			
 			parameters.adriver_url = ADRIVER_URL + adriverParms;
@@ -91,12 +95,14 @@
 			
 			new getObjectFromXML(parameters.adriver_url, onScenarioXMLLoad);
 			
+//			var xml_loader:AdXMLLoader = new AdXMLLoader(parameters.adriver_url);
+//			xml_loader.addEventListener(Event.COMPLETE, onScenarioXMLLoad);
+//			xml_loader.loadXML();
 			
 		}
 		
 		private function onScenarioXMLLoad(obj:Object):void
 		{
-			var click_url:String;
 			
 			var video_url:String = obj.flv;
 			var image_url:String = obj.image;
@@ -122,25 +128,28 @@
 			
 			//image_url = "http://217.16.18.206/images/0000783/0000783234/0/popUnder300x250.swf";
 			
-			
 			if (video_url || image_url || swf_url) {
 				var ad_cont:AdContainer = new AdContainer(parameters, this);
 				this.addChild(ad_cont);
+				ad_cont.addEventListener(MouseEvent.CLICK, function(event:MouseEvent){
+					trace("Ad clicked");
+					obj.makeClick();
+				});
 			}
 			
 			if (video_url) {
 				trace("Show video: "+ video_url);
-				ad_cont.showVideo(video_url, click_url);	
+				ad_cont.showVideo(video_url);	
 			} 
 			
 			if (image_url) {
 				trace("Show image: " + image_url);
-				ad_cont.loadBanner(image_url, 0, 0, click_url);
+				ad_cont.loadBanner(image_url, 0, 0);
 			}
 			
 			if (swf_url) {
 				trace("Show swf: " + swf_url)
-				ad_cont.loadBanner(swf_url, 0, 0, click_url)
+				ad_cont.loadBanner(swf_url, 0, 0)
 			}
 		}
 		

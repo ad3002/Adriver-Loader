@@ -14,20 +14,19 @@
 	import flash.events.NetStatusEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.external.ExternalInterface;
 	import flash.media.Video;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
 	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
-	import flash.net.navigateToURL;
 	
 	
 	
 	public class AdContainer extends MovieClip
 	{
-		
-		
 		
 		private var shift = 60;
 		private var defW = 128;
@@ -49,6 +48,7 @@
 		private var _video_url:String;
 		private var _click_url:String;
 		
+		private var scenario_obj:Object;
 		
 		public function AdContainer(given_parameters:Object, mc)
 		{
@@ -60,7 +60,6 @@
 			//Stage.addListener({onResize:resizer});
 			
 			if (parameters.skip_button) {
-				trace("Button init");
 				parameters.skip_button.x = -1000;
 				parameters.skip_button.y = 0;
 			}
@@ -71,18 +70,6 @@
 		private function resizer()
 		{
 			
-		}
-		
-		private function onVideoClick(event:MouseEvent):void
-		{
-			var url:URLRequest = new URLRequest(_click_url);
-			navigateToURL(url, "_blank"); 
-		}
-		
-		private function onSWFClick(event:MouseEvent):void
-		{
-			var url:URLRequest = new URLRequest(_click_url);
-			navigateToURL(url, "_blank"); 
 		}
 		
 		private function onSkipClick(event:MouseEvent):void
@@ -100,24 +87,16 @@
 		}
 		
 		
-		
-		public function loadBanner(url:String, x:int, y:int, click_url:String) {
-			
-			_click_url = click_url;
+		public function loadBanner(url:String, x:int, y:int) {
 			
 			var loader:Loader = new Loader();
 			configureListeners(loader.contentLoaderInfo);
 			loader.addEventListener(MouseEvent.CLICK, clickHandler);
-			
 			var request:URLRequest = new URLRequest(url);
 			loader.load(request);
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
-			
-			loader.addEventListener(MouseEvent.CLICK, onSWFClick);
-			
-			
 		}
 		
 		private function configureListeners(dispatcher:IEventDispatcher):void {
@@ -174,12 +153,20 @@
 			//trace("clickHandler: " + event + "\n");
 			//var loader:Loader = Loader(event.target);
 			//loader.unload();
+			try {
+				var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
+				if(ie) {
+					ExternalInterface.call('window.open', _click_url);	
+				} else {
+					navigateToURL(new URLRequest(_click_url), '_blank');	
+				}
+			} catch (e:Error) {
+			}
 		}
 		
-		public function showVideo(url:String, click_url:String):void
+		public function showVideo(url:String):void
 		{
 			_video_url = url;
-			_click_url = click_url;
 			connection = new NetConnection();
 			connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
@@ -212,8 +199,6 @@
 			stream.play(_video_url);
 			addChild(video);
 			
-			video.addEventListener(MouseEvent.CLICK, onVideoClick);
-			
 			if (parameters.skip_button) {
 				parameters.skip_button.x = video.width - parameters.skip_button.width;
 				parameters.skip_button.y = video.height - parameters.skip_button.height;
@@ -222,7 +207,6 @@
 			}
 		}
 	
-		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			trace("securityErrorHandler: " + event);
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));

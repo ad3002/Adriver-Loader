@@ -10,7 +10,6 @@
 	
 	public class site extends MovieClip
 	{
-		
 		private var parameters:Object;
 		
 		public function site()
@@ -22,10 +21,11 @@
 		private function onAddedToStage(e: Event): void { 
 
 			var vkontakte_wrapper: Object = Object(parent.parent); 
-			
 			if (!vkontakte_wrapper.application) {
 				vkontakte_wrapper.application = [];
-				vkontakte_wrapper.application.parameters = null;
+				vkontakte_wrapper.application.parameters = {
+													viewer_id:0
+													};
 			}
 			
 			parameters = {
@@ -41,7 +41,13 @@
 					country_name: 2,
 					bdate: 0
 				},
-		
+				style: {
+					color: "#CCCCCC",
+					width: 807,
+					height: 100,
+					x: 0,
+					y: 0
+				},				
 				adriver: {
 					sid: 103134	
 				}
@@ -50,13 +56,10 @@
 			
 			var vk_info:VK = new VK(parameters); 
 			addChild(vk_info);
-			
 			vk_info.addEventListener(SocialEvent.USER_LOADED, onUserInfo);
 			vk_info.addEventListener(SocialEvent.ERROR, onUserInfoError);
 			vk_info.addEventListener(SocialEvent.FLASHVARS_ERROR, onUserInfoError);
-			
 			vk_info.getUserData();
-			
 		}
 		
 		private function onUserInfo(event:SocialEvent):void {
@@ -73,8 +76,6 @@
 			addEventListener(AdriverEvent.SKIPPED, onAdSkipped);
 			addEventListener(AdriverEvent.PROGRESS, onAdProgress);
 			ad.loadAd();
-			
-			
 		}
 		
 		private function onUserInfoError(event:SocialEvent):void {
@@ -114,7 +115,6 @@
 		private function onAdProgress(event:Event):void {
 			trace("Ad progress");
 		}
-		
 		
 	}
 }
