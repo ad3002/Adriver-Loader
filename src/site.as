@@ -110,6 +110,8 @@
 		
 		private function onAdSkipped(event:Event):void {
 			trace("Ad skipped");
+			removeChild(mc_with_ad);
+			removeChild(sb);
 		}
 		
 		private function onAdProgress(event:Event):void {
