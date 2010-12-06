@@ -20,8 +20,6 @@
 	public class adriverLoader extends Sprite
 	{
 		private const PREGAME:String = "pregame";
-		private const VKONTAKTE:String = "vkontakte";
-		
 		private const ADRIVER_URL = "http://ad.adriver.ru/cgi-bin/xmerle.cgi?";
 		
 		private var req:String;
@@ -37,6 +35,8 @@
 			_mc = mc;
 			_stage = _mc.root;
 			mc.addChild(this);
+		
+			parameters.debug("adLoader added to stage");
 			
 //			this.x = parameters.style.x;
 //			this.x = parameters.style.y;
@@ -51,9 +51,11 @@
 		
 		public function loadAd():void {
 			
-			if (parameters.social_network == PREGAME) {
+			if (parameters.ad_type == PREGAME) {
+				parameters.debug("Loading PREGAME ad");
 				_loadAd();
 			} else {
+				parameters.debug("Loading default ad");
 				_loadAd();	
 			}
 		}
@@ -90,10 +92,9 @@
 			
 			parameters.adriver_url = ADRIVER_URL + adriverParms;
 			
-			// DEBUG
-			//parameters.message.text += "Full url: " + parameters.adriver_url + "\n";
+			parameters.debug("XML url: "+parameters.adriver_url);
 			
-			new getObjectFromXML(parameters.adriver_url, onScenarioXMLLoad);
+			new getObjectFromXML(parameters, onScenarioXMLLoad);
 			
 //			var xml_loader:AdXMLLoader = new AdXMLLoader(parameters.adriver_url);
 //			xml_loader.addEventListener(Event.COMPLETE, onScenarioXMLLoad);
@@ -120,6 +121,9 @@
 			//trace ("event:"+event_url+"\n");	
 			
 			if (pixel1_url) {
+				
+				parameters.debug("Try pixel1 url: "+pixel1_url);
+				
 				var request:URLRequest = new URLRequest(pixel1_url);
 				var loader:URLLoader = new URLLoader();
 				loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
@@ -128,6 +132,9 @@
 			}
 			
 			if (pixel2_url) {
+				
+				parameters.debug("Try pixel2 url: "+pixel2_url);
+				
 				var request:URLRequest = new URLRequest(pixel2_url);
 				var loader:URLLoader = new URLLoader();
 				loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
@@ -138,38 +145,39 @@
 			//image_url = "http://217.16.18.206/images/0000783/0000783234/0/popUnder300x250.swf";
 			
 			if (video_url || image_url || swf_url) {
+				
+				parameters.debug("Init container: ");
+				
 				var ad_cont:AdContainer = new AdContainer(parameters, this);
 				this.addChild(ad_cont);
 				ad_cont.addEventListener(MouseEvent.CLICK, function(event:MouseEvent){
-					trace("Ad clicked, clicking it");
+					parameters.debug("Ad clicked in loader: "+pixel1_url);
 					obj.makeClick();
 				});
-				
 			}
 			
 			if (video_url) {
-				trace("Show video: "+ video_url);
+				parameters.debug("Trying add a video: "+video_url);
 				ad_cont.showVideo(video_url);	
 			} 
 			
 			if (image_url) {
-				trace("Show image: " + image_url);
+				parameters.debug("Trying add an image: "+image_url);
 				ad_cont.loadBanner(image_url, 0, 0);
 			}
 			
 			if (swf_url) {
-				trace("Show swf: " + swf_url)
+				parameters.debug("Trying add a swf: "+swf_url);
 				ad_cont.loadBanner(swf_url, 0, 0)
 			}
 		}
 		
 		private function ioErrorHandlerPixel(event:IOErrorEvent):void {
-			trace("Pixel load error: " + event + "\t'n" + event.target.url);
+			parameters.debug("Pixel load error: " + event + "\t" + event.target.url);
 		} 
 		
-		// CHECK WILL IT WORK IF PIXEL IS SPECIFIED
-		private function completeHandlerPixel(event:IOErrorEvent):void {
-			trace("Pixel load complete: "+ event.target.url);
+		private function completeHandlerPixel(event:Event):void {
+			parameters.debug("Pixel load complete: "+ event.target.url);
 		}		
 		
 		private function get_right_custom(custom:Object):String {

@@ -11,10 +11,14 @@
 
 	public class getObjectFromXML extends Sprite {	
 		
-		public function getObjectFromXML(url:String, onload:Function)
+		private var parameters:Object;
+		
+		public function getObjectFromXML(p:Object, onload:Function)
 		{
 		
-			trace("XML: "+url);
+			parameters = p;
+			var url:String = parameters.adriver_url;
+			
 			var o = {
 				ar_stages_trg: [0,0,0,0,0,0,0,0,0,0],
 				repRnd: function(u:String){
@@ -22,12 +26,33 @@
 				},
 				makeClick: function(u:String = null):void {
 					try {
-						var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
+						
+						parameters.debug("Trying handle click in xmlObject");
+						parameters.debug("..URL: "+u);
+						parameters.debug("Do it have wrapper? "+parameters.vkontakte_hasWrapper);
+						
+						var ie:String = null;
+						//var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
 						u = this['ar_cgihref'] + '&rleurl=' + escape(u || '');
 						if(ie) {
-							ExternalInterface.call('window.open',u);	
+							parameters.debug("..IE case");
+							if (parameters.vkontakte_hasWrapper) {
+								parameters.debug("....wrapper case");
+								ExternalInterface.call('window.open',u);
+							} else {
+								parameters.debug("....no wrapper case");
+								ExternalInterface.call('window.open',u);
+							}
 						} else {
-							navigateToURL(new URLRequest(u), '_blank');	
+							parameters.debug("..not IE case");
+							if (parameters.vkontakte_hasWrapper) {
+								parameters.debug("....wrapper case");
+								navigateToURL(new URLRequest(u), '_blank');
+								//parameters.vkontakte_wrapper.external.callMethod("navigateToURL", new URLRequest(u));
+							} else {
+								parameters.debug("....no wrapper case");
+								navigateToURL(new URLRequest(u), '_blank');
+							}
 						}
 					} catch (e:Error) {
 					}

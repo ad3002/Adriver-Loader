@@ -20,19 +20,13 @@
 		
 		private function onAddedToStage(e: Event): void { 
 
-			var vkontakte_wrapper: Object = Object(parent.parent); 
-			if (!vkontakte_wrapper.application) {
-				vkontakte_wrapper.application = [];
-				vkontakte_wrapper.application.parameters = {
-													viewer_id:0
-													};
-			}
+			debug("Loaded");
 			
 			parameters = {
 				
 				social_network: "vkontakte",
-				//vk_secret: "JNi8W1YXui",
-				flashVars: vkontakte_wrapper.application.parameters,
+				ad_type: "pregame",
+				vk_secret: "JNi8W1YXui",
 				skip_button: sb,
 				user: {
 					uid: 1,
@@ -53,9 +47,25 @@
 					//ad: 256980
 					//ad: 217104,
 					//bid: 783234
-				}
-					
+				},
+				debug: debug,
+				onAdSkipped: onAdSkipped
 			};
+			
+			var vkontakte_wrapper: Object = Object(parent.parent); 
+			if (!vkontakte_wrapper.application) {
+				debug("App hasn't wrapper");
+				parameters["vkontakte_hasWrapper"] = false;
+				parameters["flashVars"] = {
+											viewer_id:0					
+										  }
+			} else {
+				debug("App has wrapper");
+				parameters["vkontakte_hasWrapper"] = true;
+				parameters["vkontakte_wrapper"] = vkontakte_wrapper;
+				parameters["flashVars"] = vkontakte_wrapper.application.parameters;
+					
+			}
 			
 			var vk_info:VK = new VK(parameters); 
 			addChild(vk_info);
@@ -65,10 +75,15 @@
 			vk_info.getUserData();
 		}
 		
+		private function debug(text:String):void {
+			message.text += text + "\n";
+		}
+		
 		private function onUserInfo(event:SocialEvent):void {
-			trace("User info here");
-			parameters.user = event.profile;
 			
+			debug("Recive VK user info");
+			
+			parameters.user = event.profile;
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			mc_with_ad.addChild(ad);
 			
@@ -82,7 +97,8 @@
 		}
 		
 		private function onUserInfoError(event:SocialEvent):void {
-			trace("User info error" + event);
+
+			debug("Don't recive VK user info");
 			
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);
@@ -95,29 +111,29 @@
 		}
 		
 		private function onAdStarted(event:Event):void {
-			trace("Ad started");
+			debug("Ad started");
 		}
 		
 		private function onAdFinished(event:Event):void {
-			trace("Ad finished");	
+			debug("Ad finished");	
 		}
 		
 		private function onAdFailed(event:Event):void {
-			trace("Ad failed");
+			debug("Ad failed");
 		}
 		
 		private function onAdLoaded(event:Event):void {
-			trace("Ad loaded");
+			debug("Ad loaded");
 		}
 		
-		private function onAdSkipped(event:Event):void {
-			trace("Ad skipped");
+		private function onAdSkipped(event:AdriverEvent):void {
+			debug("Ad skipped");
 			removeChild(mc_with_ad);
 			removeChild(sb);
 		}
 		
 		private function onAdProgress(event:Event):void {
-			trace("Ad progress");
+			debug("Ad is loading...");
 		}
 		
 	}
