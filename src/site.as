@@ -22,24 +22,11 @@
 
 			debug("Loaded");
 			
-			var vkontakte_wrapper: Object = Object(parent.parent); 
-			if (!vkontakte_wrapper.application) {
-				
-				debug("No wrapper");
-				vkontakte_hasWrapper: false,
-				vkontakte_wrapper.application = [];
-				vkontakte_wrapper.application.parameters = {
-													viewer_id:0
-													};
-			}
-			
 			parameters = {
 				
 				social_network: "vkontakte",
 				ad_type: "pregame",
-				vkontakte_hasWrapper: true,
 				vk_secret: "JNi8W1YXui",
-				flashVars: vkontakte_wrapper.application.parameters,
 				skip_button: sb,
 				user: {
 					uid: 1,
@@ -64,6 +51,21 @@
 				debug: debug,
 				onAdSkipped: onAdSkipped
 			};
+			
+			var vkontakte_wrapper: Object = Object(parent.parent); 
+			if (!vkontakte_wrapper.application) {
+				debug("App hasn't wrapper");
+				parameters["vkontakte_hasWrapper"] = false;
+				parameters["flashVars"] = {
+											viewer_id:0					
+										  }
+			} else {
+				debug("App has wrapper");
+				parameters["vkontakte_hasWrapper"] = true;
+				parameters["vkontakte_wrapper"] = vkontakte_wrapper;
+				parameters["flashVars"] = vkontakte_wrapper.application.parameters;
+					
+			}
 			
 			var vk_info:VK = new VK(parameters); 
 			addChild(vk_info);

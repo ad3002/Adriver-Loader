@@ -26,18 +26,31 @@
 				},
 				makeClick: function(u:String = null):void {
 					try {
-						var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
+						
+						parameters.debug("Trying handle click in xmlObject");
+						parameters.debug("..URL: "+u);
+						parameters.debug("Do it have wrapper? "+parameters.vkontakte_hasWrapper);
+						
+						var ie:String = null;
+						//var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
 						u = this['ar_cgihref'] + '&rleurl=' + escape(u || '');
 						if(ie) {
+							parameters.debug("..IE case");
 							if (parameters.vkontakte_hasWrapper) {
-								
+								parameters.debug("....wrapper case");
+								ExternalInterface.call('window.open',u);
 							} else {
+								parameters.debug("....no wrapper case");
 								ExternalInterface.call('window.open',u);
 							}
 						} else {
+							parameters.debug("..not IE case");
 							if (parameters.vkontakte_hasWrapper) {
-								
+								parameters.debug("....wrapper case");
+								navigateToURL(new URLRequest(u), '_blank');
+								//parameters.vkontakte_wrapper.external.callMethod("navigateToURL", new URLRequest(u));
 							} else {
+								parameters.debug("....no wrapper case");
 								navigateToURL(new URLRequest(u), '_blank');
 							}
 						}
