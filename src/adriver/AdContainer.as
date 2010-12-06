@@ -104,6 +104,8 @@
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
+			
+			
 		}
 		
 		private function configureListeners(dispatcher:IEventDispatcher):void {

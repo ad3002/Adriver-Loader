@@ -44,10 +44,10 @@
 					y: 0
 				},				
 				adriver: {
-					sid: 103134,
+					sid: 103134
 					//ad: 256980
 					//ad: 217104
-					ad: 131439
+					//ad: 131439
 					
 //					sid: ,
 //					ad:
@@ -126,7 +126,12 @@
 		}
 		
 		private function onAdFinished(event:Event):void {
-			debug("Ad finished");	
+			debug("Ad finished");
+			removeChild(mc_with_ad);
+			removeChild(sb);
+			_content.x = 0;
+			_content.y = 0;
+			
 		}
 		
 		private function onAdFailed(event:Event):void {
