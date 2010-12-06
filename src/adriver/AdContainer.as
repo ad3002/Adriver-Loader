@@ -19,6 +19,7 @@
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
 	import flash.net.URLRequest;
+	import flash.net.URLLoader;
 	import flash.net.navigateToURL;
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
@@ -47,6 +48,7 @@
 		private var _parent:Object;
 		private var _video_url:String;
 		private var _click_url:String;
+		private var _event_url:String;
 		
 		private var scenario_obj:Object;
 		
@@ -111,6 +113,17 @@
 		
 		private function completeHandler(event:Event):void {
 			//trace("completeHandler: " + event + "\n");
+			//trace("completed, need to call event0"+parameters.eventUrl);
+			if (parameters.eventUrl) {
+				var request:URLRequest = new URLRequest(parameters.eventUrl+"0");
+				var loader:URLLoader = new URLLoader();
+				//loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
+				loader.addEventListener(Event.COMPLETE, function(event:Event){
+					trace("event0 loaded");
+				});
+				loader.load(request);				
+			}
+			
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
 			
 			if (parameters.skip_button) {
