@@ -83,7 +83,6 @@
 		
 		private function onUserInfoError(event:SocialEvent):void {
 			trace("User info error" + event);
-			//parameters.user = event.profile;
 			
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);
