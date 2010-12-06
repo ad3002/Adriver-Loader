@@ -18,8 +18,8 @@
 	import flash.media.Video;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
-	import flash.net.URLRequest;
 	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
@@ -76,9 +76,9 @@
 		
 		private function onSkipClick(event:MouseEvent):void
 		{
-			//trace("Event: ad skipped \n");
+			parameters.debug("Skip button clicked in container");
 			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
-			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
+			parameters.onAdSkipped(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
 		private function onVideoSkipClick(event:MouseEvent):void
@@ -91,6 +91,7 @@
 		
 		public function loadBanner(url:String, x:int, y:int) {
 			
+			parameters.debug("Trying load banner: "+url);
 			var loader:Loader = new Loader();
 			configureListeners(loader.contentLoaderInfo);
 			loader.addEventListener(MouseEvent.CLICK, clickHandler);

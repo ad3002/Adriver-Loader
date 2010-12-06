@@ -11,10 +11,14 @@
 
 	public class getObjectFromXML extends Sprite {	
 		
-		public function getObjectFromXML(url:String, onload:Function)
+		private var parameters:Object;
+		
+		public function getObjectFromXML(p:Object, onload:Function)
 		{
 		
-			trace("XML: "+url);
+			parameters = p;
+			var url:String = parameters.adriver_url;
+			
 			var o = {
 				ar_stages_trg: [0,0,0,0,0,0,0,0,0,0],
 				repRnd: function(u:String){
@@ -25,9 +29,17 @@
 						var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
 						u = this['ar_cgihref'] + '&rleurl=' + escape(u || '');
 						if(ie) {
-							ExternalInterface.call('window.open',u);	
+							if (parameters.vkontakte_hasWrapper) {
+								
+							} else {
+								ExternalInterface.call('window.open',u);
+							}
 						} else {
-							navigateToURL(new URLRequest(u), '_blank');	
+							if (parameters.vkontakte_hasWrapper) {
+								
+							} else {
+								navigateToURL(new URLRequest(u), '_blank');
+							}
 						}
 					} catch (e:Error) {
 					}
