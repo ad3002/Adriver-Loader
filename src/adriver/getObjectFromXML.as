@@ -28,12 +28,12 @@
 					try {
 						
 						parameters.debug("Trying handle click in xmlObject");
-						parameters.debug("..URL: "+u);
 						parameters.debug("Do it have wrapper? "+parameters.vkontakte_hasWrapper);
 						
 						var ie:String = null;
 						//var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
 						u = this['ar_cgihref'] + '&rleurl=' + escape(u || '');
+						parameters.debug("..URL: "+u);
 						if(ie) {
 							parameters.debug("..IE case");
 							if (parameters.vkontakte_hasWrapper) {

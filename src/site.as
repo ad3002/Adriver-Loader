@@ -28,6 +28,7 @@
 				ad_type: "pregame",
 				vk_secret: "JNi8W1YXui",
 				skip_button: sb,
+				skip_button_timeout: 3,
 				user: {
 					uid: 1,
 					sex: 2,
@@ -43,22 +44,32 @@
 					y: 0
 				},				
 				adriver: {
-					sid: 103134
+					sid: 103134,
 					//ad: 256980
-					//ad: 217104,
+					//ad: 217104
+					ad: 131439
+					
+//					sid: ,
+//					ad:
+					
 					//bid: 783234
 				},
 				debug: debug,
 				onAdSkipped: onAdSkipped
 			};
 			
+			// bring skip buttom to front
+			this.setChildIndex(sb, numChildren-1);
+			
 			var vkontakte_wrapper: Object = Object(parent.parent); 
 			if (!vkontakte_wrapper.application) {
 				debug("App hasn't wrapper");
 				parameters["vkontakte_hasWrapper"] = false;
-				parameters["flashVars"] = {
-											viewer_id:0					
-										  }
+				parameters["flashVars"] = stage.loaderInfo.parameters as Object;
+				if (!parameters["flashVars"]["viewer_id"]) {
+					parameters["flashVars"]["viewer_id"] = 0;	
+				}
+					
 			} else {
 				debug("App has wrapper");
 				parameters["vkontakte_hasWrapper"] = true;
