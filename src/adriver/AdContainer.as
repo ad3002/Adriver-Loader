@@ -225,6 +225,8 @@
 			stream.play(_video_url);
 			addChild(video);
 			
+			parameters.debug("..video size: "+video.width+"x"+video.height);
+			
 			if (parameters.skip_button) {
 				parameters.debug("Button showed");
 				parameters.skip_button.x = video.width - parameters.skip_button.width;
