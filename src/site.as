@@ -26,7 +26,7 @@
 			if (!vkontakte_wrapper.application) {
 				
 				debug("No wrapper");
-				vkontakte_hasWrapper = false;
+				vkontakte_hasWrapper: false,
 				vkontakte_wrapper.application = [];
 				vkontakte_wrapper.application.parameters = {
 													viewer_id:0
@@ -37,7 +37,7 @@
 				
 				social_network: "vkontakte",
 				ad_type: "pregame",
-				vkontakte_hasWrapper = true;
+				vkontakte_hasWrapper: true,
 				vk_secret: "JNi8W1YXui",
 				flashVars: vkontakte_wrapper.application.parameters,
 				skip_button: sb,
