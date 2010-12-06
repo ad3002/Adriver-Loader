@@ -31,15 +31,15 @@
 			parameters = {
 				
 				social_network: "vkontakte",
-				vk_secret: "JNi8W1YXui",
+				//vk_secret: "JNi8W1YXui",
 				flashVars: vkontakte_wrapper.application.parameters,
 				skip_button: sb,
 				user: {
 					uid: 1,
-					gender: 2,
-					city_name: 2,
-					country_name: 2,
-					bdate: 0
+					sex: 2,
+					city_name: "st.petersburg",
+					country_name: "russia",
+					bdate: "1917-01-09"
 				},
 				style: {
 					color: "#CCCCCC",
@@ -49,7 +49,10 @@
 					y: 0
 				},				
 				adriver: {
-					sid: 103134	
+					sid: 103134
+					//ad: 256980
+					//ad: 217104,
+					//bid: 783234
 				}
 					
 			};
@@ -80,7 +83,7 @@
 		
 		private function onUserInfoError(event:SocialEvent):void {
 			trace("User info error" + event);
-			parameters.user = event.profile;
+			//parameters.user = event.profile;
 			
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);

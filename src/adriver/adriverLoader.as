@@ -69,7 +69,7 @@
 			custom_list[101] = now - (parseInt(('' + parameters.user.bdate).split('.').pop()) || now);
 			custom_list[10] = parameters.user.city_name;
 			custom_list[11] = parameters.user.country_name;
-			custom_list[12] = parameters.user.rate;
+			//custom_list[12] = parameters.user.rate;
 			custom_list[13] = parameters.flashVars.viewer_id;
 			
 			param_custom = get_right_custom(custom_list);
@@ -110,6 +110,15 @@
 			var pixel1_url:String = obj.pixel1;
 			var pixel2_url:String = obj.pixel2;
 			
+						
+//			for (var i in obj) {
+//				trace("i="+i+"="+obj[i]+"\n");
+//			}
+			
+			//var event_url:String = obj.ar_event;
+			parameters.eventUrl = obj.ar_event;
+			//trace ("event:"+event_url+"\n");	
+			
 			if (pixel1_url) {
 				var request:URLRequest = new URLRequest(pixel1_url);
 				var loader:URLLoader = new URLLoader();
@@ -132,9 +141,10 @@
 				var ad_cont:AdContainer = new AdContainer(parameters, this);
 				this.addChild(ad_cont);
 				ad_cont.addEventListener(MouseEvent.CLICK, function(event:MouseEvent){
-					trace("Ad clicked");
+					trace("Ad clicked, clicking it");
 					obj.makeClick();
 				});
+				
 			}
 			
 			if (video_url) {
@@ -157,6 +167,7 @@
 			trace("Pixel load error: " + event + "\t'n" + event.target.url);
 		} 
 		
+		// CHECK WILL IT WORK IF PIXEL IS SPECIFIED
 		private function completeHandlerPixel(event:IOErrorEvent):void {
 			trace("Pixel load complete: "+ event.target.url);
 		}		
@@ -165,15 +176,15 @@
 			
 			var j:int;
 			var s:Object = [];
-			
+
 			for ( var i:int=0; i < custom.length; i++) {
 				if (custom[i]) { 
-					s.push( (!j?(j=1,i+'='):'')+escape(custom[i]))
+					s.push( (!j?(j=1,i+'='):'')+escape(custom[i]));
 				} else {
-					j=0
+					j=0;
 				}
 			}	
-			return s.length?'&custom_list='+s.join(';'):''
+			return s.length?'&custom='+s.join(';'):''
 		}
 		
 	}
