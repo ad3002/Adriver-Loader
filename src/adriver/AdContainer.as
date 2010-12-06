@@ -14,6 +14,7 @@
 	import flash.events.NetStatusEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
 	import flash.media.Video;
 	import flash.net.NetConnection;
@@ -23,6 +24,7 @@
 	import flash.net.navigateToURL;
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
+	import flash.utils.Timer;
 	
 	
 	
@@ -62,11 +64,20 @@
 			//Stage.addListener({onResize:resizer});
 			
 			if (parameters.skip_button) {
+				parameters.skip_button.enabled = false;
+				
 				parameters.skip_button.x = -1000;
 				parameters.skip_button.y = 0;
+				
+				var myTimer:Timer = new Timer(parameters.skip_button_timeout*1000, 1);
+				myTimer.addEventListener(TimerEvent.TIMER, onSkipTimer);
+				myTimer.start();
 			}
 			resizer();
-		    
+		}
+		
+		private function onSkipTimer(event:TimerEvent):void {
+			parameters.skip_button.enabled = true;
 		}
 		
 		private function resizer()
