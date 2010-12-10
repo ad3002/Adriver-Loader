@@ -98,7 +98,7 @@
 			parameters.debug("Trying load banner: "+url);
 			var loader:Loader = new Loader();
 			configureListeners(loader.contentLoaderInfo);
-			loader.addEventListener(MouseEvent.CLICK, clickHandler);
+			//loader.addEventListener(MouseEvent.CLICK, clickHandler);
 			var request:URLRequest = new URLRequest(url);
 			loader.load(request);
 			loader.x = x;
@@ -118,21 +118,27 @@
 		
 		private function completeHandler(event:Event):void {
 			//trace("completeHandler: " + event + "\n");
-			//trace("completed, need to call event0"+parameters.eventUrl);
+			
 			if (parameters.eventUrl) {
+				parameters.debug("complete handler, loading event0");
+
 				var request:URLRequest = new URLRequest(parameters.eventUrl+"0");
 				var loader:URLLoader = new URLLoader();
-				//loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, function(event:IOErrorEvent){
+					trace("event0 loaded with io_error");
+					});
+				
 				loader.addEventListener(Event.COMPLETE, function(event:Event){
-					trace("event0 loaded");
-				});
+					//trace("event0 loaded");
+				    });
+				
 				loader.load(request);				
 			}
 			
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
 			
 			if (parameters.skip_button) {
-				trace("Button showed");
+				//trace("Button showed");
 				
 				parameters.skip_button.x = event.target.width;
 				parameters.skip_button.y = event.target.height - parameters.skip_button.height;
@@ -169,17 +175,6 @@
 		
 		private function clickHandler(event:MouseEvent):void {
 			//trace("clickHandler: " + event + "\n");
-			//var loader:Loader = Loader(event.target);
-			//loader.unload();
-			try {
-				var ie:String = ExternalInterface.call("function(){return window.ActiveXObject}");
-				if(ie) {
-					ExternalInterface.call('window.open', _click_url);	
-				} else {
-					navigateToURL(new URLRequest(_click_url), '_blank');	
-				}
-			} catch (e:Error) {
-			}
 		}
 		
 		public function showVideo(url:String):void

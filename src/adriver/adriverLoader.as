@@ -111,14 +111,8 @@
 			var pixel1_url:String = obj.pixel1;
 			var pixel2_url:String = obj.pixel2;
 			
-						
-//			for (var i in obj) {
-//				trace("i="+i+"="+obj[i]+"\n");
-//			}
-			
-			//var event_url:String = obj.ar_event;
+
 			parameters.eventUrl = obj.ar_event;
-			//trace ("event:"+event_url+"\n");	
 			
 			if (pixel1_url) {
 				
@@ -151,7 +145,7 @@
 				var ad_cont:AdContainer = new AdContainer(parameters, this);
 				this.addChild(ad_cont);
 				ad_cont.addEventListener(MouseEvent.CLICK, function(event:MouseEvent){
-					parameters.debug("Ad clicked in loader: "+pixel1_url);
+					parameters.debug("Ad clicked in loader ");
 					obj.makeClick();
 				});
 			}
@@ -160,15 +154,16 @@
 				parameters.debug("Trying add a video: "+video_url);
 				ad_cont.showVideo(video_url);	
 			} 
-			
-			if (image_url) {
+			else if (image_url) {
 				parameters.debug("Trying add an image: "+image_url);
 				ad_cont.loadBanner(image_url, 0, 0);
-			}
-			
-			if (swf_url) {
+			}			
+			else if (swf_url) {
 				parameters.debug("Trying add a swf: "+swf_url);
 				ad_cont.loadBanner(swf_url, 0, 0)
+			}
+			else {
+				parameters.debug("Empty banner");				
 			}
 		}
 		
