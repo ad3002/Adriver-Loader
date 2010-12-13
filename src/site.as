@@ -48,13 +48,13 @@
 					// sid: 103134
 
 					// flv video
-					// sid: 103134,
-					// ad: 131439
+					 sid: 103134,
+					 ad: 131439
 					
 					// swf banner
-					sid: 1,
-					ad: 217104,
-					bid: 783234
+					// sid: 1,
+					// ad: 217104,
+					// bid: 783234
 				},
 				debug: debug,
 				onAdSkipped: onAdSkipped
