@@ -1,9 +1,10 @@
-package adriver
+package adriver.events
 {
 	import flash.events.Event;
 	
 	public class AdriverEvent extends Event
 	{
+		public static const GET_PREROLL_LINK:String = "get_link";
 		public static const STARTED:String = "started";
 		public static const FINISHED:String = "finished";
 		public static const FAILED:String = "failed";
