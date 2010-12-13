@@ -36,7 +36,7 @@
 			_mc = mc;
 			_stage = _mc.root;
 			mc.addChild(this);
-		
+			
 			parameters.debug("adLoader added to stage");
 			
 //			this.x = parameters.style.x;

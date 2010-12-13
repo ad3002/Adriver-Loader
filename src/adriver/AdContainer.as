@@ -61,6 +61,9 @@
 		
 		private var durationText:TextField;
 		
+		private var duration_timer:Timer;
+		private var skip_timer:Timer;
+		
 		public function AdContainer(given_parameters:Object, mc)
 		{
 			super();
@@ -76,9 +79,9 @@
 				parameters.skip_button.x = -1000;
 				parameters.skip_button.y = 0;
 				
-				var myTimer:Timer = new Timer(parameters.skip_button_timeout*1000, 1);
-				myTimer.addEventListener(TimerEvent.TIMER, onSkipTimer);
-				myTimer.start();
+				skip_timer = new Timer(parameters.skip_button_timeout*1000, 1);
+				skip_timer.addEventListener(TimerEvent.TIMER, onSkipTimer);
+				skip_timer.start();
 			}
 			
 			resizer();
@@ -93,10 +96,10 @@
 			
 			parameters.skip_button.label = parameters.skip_button_label + " (" + parameters.max_duration+")";
 			
-			var myTimer:Timer = new Timer(1000, parameters.max_duration);
-			myTimer.addEventListener(TimerEvent.TIMER, onTick);
-			myTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete); 
-			myTimer.start();
+			duration_timer = new Timer(1000, parameters.max_duration);
+			duration_timer.addEventListener(TimerEvent.TIMER, onTick);
+			duration_timer.addEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete); 
+			duration_timer.start();
 			
 		}
 		
@@ -107,35 +110,43 @@
 		}
 		
 		private function onAdTimerComplete(event:TimerEvent):void {
-			event.target.removeEventListener(TimerEvent.TIMER, onTick);
-			event.target.removeEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete);
 			if (stream) {
 				stream.close();
 			}
 			
+			clean_container();
+			
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LIMITED));
 		}
 		
-		private function resizer()
-		{
+		private function clean_container():void {
 			
+			duration_timer.removeEventListener(TimerEvent.TIMER, onTick);
+			duration_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete);
+			skip_timer.removeEventListener(TimerEvent.TIMER, onSkipTimer);
+			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
+			if (stream) {
+				stream.close();
+			}
+		}
+		
+		
+		private function resizer()
+		{	
 		}
 		
 		
 		private function onSkipClick(event:MouseEvent):void
 		{
 			parameters.debug("Skip button clicked in container");
-			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
+			clean_container();
 			parameters.onAdSkipped(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
 		private function onVideoSkipClick(event:MouseEvent):void
 		{
 			parameters.debug("Skip button clicked in container");
-			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
-			
-			stream.close();
-			
+			clean_container();
 			parameters.onAdSkipped(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
@@ -209,14 +220,10 @@
 			//trace("completeHandler: " + event + "\n");
 			
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
-			
 			if (parameters.skip_button) {
-				//trace("Button showed");
-				
 				parameters.skip_button.x = event.target.width;
 				parameters.skip_button.y = event.target.height - parameters.skip_button.height;
 				parameters.skip_button.addEventListener(MouseEvent.CLICK, onSkipClick);
-				
 			}
 		}
 		
@@ -230,6 +237,7 @@
 		
 		private function ioErrorHandler(event:IOErrorEvent):void {
 			//trace("ioErrorHandler: " + event + "\n");
+			clean_container();
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
@@ -244,10 +252,6 @@
 		
 		private function unLoadHandler(event:Event):void {
 			//trace("unLoadHandler: " + event + "\n");
-		}
-		
-		private function clickHandler(event:MouseEvent):void {
-			//trace("clickHandler: " + event + "\n");
 		}
 		
 		public function showVideo(url:String):void
@@ -268,12 +272,15 @@
 					break;
 				case "NetStream.Play.StreamNotFound":
 					parameters.debug("..Unable to locate video: " + _video_url);
+					clean_container();
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 					break;
 				case "NetStream.Play.Failed":
 					parameters.debug("Play failed: " + _video_url);
+					clean_container();
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 				case "NetStream.Play.Stop":
+					clean_container();
 					parameters.debug("Play finished: " + _video_url);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));
 //				case "NetStream.Play.Switch":
@@ -284,6 +291,7 @@
 		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			parameters.debug("securityErrorHandler: " + event);
+			clean_container();
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
