@@ -1,6 +1,7 @@
 ﻿package adriver
 {
 	import adriver.getObjectFromXML;
+	import adriver.events.AdriverEvent;
 	
 	import flash.display.Loader;
 	import flash.display.MovieClip;
@@ -25,6 +26,7 @@
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
+	
 	
 	
 	
@@ -92,6 +94,15 @@
 			parameters.onAdSkipped(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
+		private function onVideoSkipClick(event:MouseEvent):void
+		{
+			parameters.debug("Skip button clicked in container");
+			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
+			
+			stream.close();
+			
+			parameters.onAdSkipped(new AdriverEvent(AdriverEvent.SKIPPED));
+		}
 		
 		public function loadBanner(url:String, x:int, y:int) {
 			
@@ -104,6 +115,8 @@
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
+			
+			
 		}
 		
 		private function configureListeners(dispatcher:IEventDispatcher):void {
@@ -210,7 +223,9 @@
 		}
 		
 		private function connectStream():void {
-			var stream:NetStream = new NetStream(connection);
+			
+			stream = new NetStream(connection);
+			
 			stream.client = new Object();
 			stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
@@ -220,11 +235,13 @@
 			stream.play(_video_url);
 			addChild(video);
 			
+			parameters.debug("..video size: "+video.width+"x"+video.height);
+			
 			if (parameters.skip_button) {
 				parameters.debug("Button showed");
 				parameters.skip_button.x = video.width - parameters.skip_button.width;
 				parameters.skip_button.y = video.height - parameters.skip_button.height;
-				parameters.skip_button.addEventListener(MouseEvent.CLICK, onSkipClick);
+				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
 			}
 		}
 	
