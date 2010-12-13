@@ -150,7 +150,7 @@
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
-			
+			sendPixels();
 			show_duration();
 			
 		}
@@ -175,7 +175,7 @@
 				parameters.skip_button.y = video.height - parameters.skip_button.height;
 				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
 			}
-			
+			sendPixels();
 			show_duration();
 		}
 		
@@ -189,24 +189,24 @@
 			dispatcher.addEventListener(Event.UNLOAD, unLoadHandler);
 		}
 		
-		private function completeHandler(event:Event):void {
-			//trace("completeHandler: " + event + "\n");
-			
-			if (parameters.eventUrl) {
-				parameters.debug("complete handler, loading event0");
+		private function sendPixels():void {
 
+			if (parameters.eventUrl) {
+				parameters.debug("Complete handler, loading event0");
 				var request:URLRequest = new URLRequest(parameters.eventUrl+"0");
 				var loader:URLLoader = new URLLoader();
 				loader.addEventListener(IOErrorEvent.IO_ERROR, function(event:IOErrorEvent){
-					trace("event0 loaded with io_error");
-					});
-				
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.PIXEL_ERROR));
+				});
 				loader.addEventListener(Event.COMPLETE, function(event:Event){
-					//trace("event0 loaded");
-				    });
-				
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.PIXEL_OK));
+				});
 				loader.load(request);				
 			}
+		}
+		
+		private function completeHandler(event:Event):void {
+			//trace("completeHandler: " + event + "\n");
 			
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
 			
