@@ -4,7 +4,6 @@
 	import adriver.AdContainer;
 	import adriver.events.AdriverEvent;
 	import adriver.events.AdriverXMLEvent;
-	import adriver.getObjectFromXML;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Loader;

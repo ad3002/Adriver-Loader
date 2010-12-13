@@ -47,8 +47,7 @@
 				},
 				style: {
 					width: stage.width,
-					height: stage.height,
-					align: 'center'
+					height: stage.height
 				},				
 				adriver: {
 					// image 

@@ -1,8 +1,6 @@
 ﻿package adriver
 {
 	import adriver.events.AdriverEvent;
-	import adriver.getObjectFromXML;
-	
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.SimpleButton;
@@ -27,11 +25,6 @@
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
-	
-	
-	
-	
-	
 	
 	public class AdContainer extends MovieClip
 	{
