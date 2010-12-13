@@ -18,7 +18,7 @@
 		
 			parameters = p;
 			var url:String = parameters.adriver_url;
-			
+						
 			var o = {
 				ar_stages_trg: [0,0,0,0,0,0,0,0,0,0],
 				repRnd: function(u:String){
@@ -63,15 +63,29 @@
 				}
 			};
 
-			function loadXML(u:String, onl) {
+			function onErrorFromAdriver(e:Event) {
+				parameters.debug("empty reply from adriver");
+			}
+			
+			function onErrorFromMirror(e:Event) {
+				parameters.debug("empty reply from mirror");			
+			}
+			
+			function loadXML(u:String, onl, onerr) {
 				u = u.split('![rnd]').join('' + Math.round(Math.random()*100000000));
 
 				function _on_error(e){
 					trace('error: ' + e + '\n location: ' + u);
 				}
 				function _on_success(e){
-					var xml = new XML(URLLoader(e.target).data);
-					if (onl) onl(xml);
+					if (e.target.bytesTotal) {
+						var xml = new XML(URLLoader(e.target).data);
+						if (onl) onl(xml);
+					}
+					else {
+						//trace("empty reply from adriver");
+						if (onerr) onerr(e);
+					}
 				}
 
 				var l = new URLLoader();
@@ -82,6 +96,7 @@
 			}
 
 			loadXML(url,function(xml:XML){
+
 				var x = xml.elements('*')[0];
 				function e(_l,_n,_r){_l[_n]=''+_r.child(_n)}
 				e(o, 'ar_zero_comppath', x);
@@ -119,8 +134,8 @@
 					if (onload is Function) {
 						onload(o);
 					}
-				});
-			});
+				}, onErrorFromMirror);
+			}, onErrorFromAdriver);
 		}
 	}
 }
