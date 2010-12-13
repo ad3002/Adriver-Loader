@@ -7,10 +7,13 @@ package adriver.events
 		public static const GET_PREROLL_LINK:String = "get_link";
 		public static const STARTED:String = "started";
 		public static const FINISHED:String = "finished";
+		public static const LIMITED:String = "limited";
 		public static const FAILED:String = "failed";
 		public static const LOADED:String = "loaded;"
 		public static const SKIPPED:String = "skipped";
 		public static const PROGRESS:String = "progress";
+		public static const PIXEL_OK:String = "pixel_ok";
+		public static const PIXEL_ERROR:String = "pixel_error";
 		
 		
 		public function AdriverEvent(type:String)

@@ -1,13 +1,14 @@
 ﻿package
 {
-	import adriver.SocialEvent;
+	import adriver.AdriverVK;
 	import adriver.adriverLoader;
 	import adriver.events.AdriverEvent;
-	import adriver.AdriverVK;
+	import adriver.events.SocialEvent;
 	
 	import fl.controls.TextArea;
 	
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	
 	
@@ -16,6 +17,8 @@
 	{
 		private var parameters:Object;
 		public static var debugger:TextArea;
+		
+		public var glass_container:Sprite;
 		
 		public function site()
 		{
@@ -32,7 +35,9 @@
 				ad_type: "pregame",
 				vk_secret: "JNi8W1YXui",
 				skip_button: sb,
-				skip_button_timeout: 3,
+				skip_button_timeout: 0,
+				max_duration: 10,
+				skip_button_label: "Skip",
 				user: {
 					uid: 1,
 					sex: 2,
@@ -40,6 +45,10 @@
 					country_name: "russia",
 					bdate: "1917-01-09"
 				},
+				style: {
+					width: stage.width,
+					height: stage.height
+				},				
 				adriver: {
 					// image 
 					// sid: 103134
@@ -130,6 +139,10 @@
 		}
 		
 		private function load_adriver():void {
+			
+			show_dark_glass();
+			this.setChildIndex(mc_with_ad, this.numChildren-1);
+			this.setChildIndex(sb, this.numChildren-1);
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);
 			ad.addEventListener(AdriverEvent.FINISHED, onAdFinished);
@@ -137,6 +150,7 @@
 			ad.addEventListener(AdriverEvent.LOADED, onAdLoaded);
 			ad.addEventListener(AdriverEvent.SKIPPED, onAdSkipped);
 			ad.addEventListener(AdriverEvent.PROGRESS, onAdProgress);
+			ad.addEventListener(AdriverEvent.LIMITED, onAdLimited);
 			ad.loadAd();
 		}
 		
@@ -146,12 +160,19 @@
 			debug("Ad started");
 		}
 		
+		private function onAdLimited(event:Event):void {
+			debug("Ad limited");
+			onAdFinished(event);
+		}
+		
 		private function onAdFinished(event:Event):void {
 			debug("Ad finished");
 			// remove ad container
 			removeChild(mc_with_ad);
 			// remove skip button
 			removeChild(sb);
+			remove_dark_glass();
+			
 			// show app content
 			_content.x = 0;
 			_content.y = 0;
@@ -159,6 +180,7 @@
 		
 		private function onAdFailed(event:Event):void {
 			debug("Ad failed");
+			onAdFinished(event);
 		}
 		
 		private function onAdLoaded(event:Event):void {
@@ -167,8 +189,7 @@
 		
 		private function onAdSkipped(event:AdriverEvent):void {
 			debug("Ad skipped");
-			removeChild(mc_with_ad);
-			removeChild(sb);
+			onAdFinished(event);
 		}
 		
 		private function onAdProgress(event:Event):void {
@@ -192,6 +213,18 @@
 			debugger.text += text + "\n";
 		}
 		
+		private function show_dark_glass():void {
+			glass_container = new Sprite();
+			addChild(glass_container);
+			glass_container.graphics.beginFill( 0x000000, .5 );
+			glass_container.graphics.drawRect( 0, 0, parameters.style.width, parameters.style.height );
+			glass_container.graphics.endFill();
+			this.setChildIndex(glass_container, this.numChildren-1);
+		}
+		
+		private function remove_dark_glass():void {
+			removeChild(glass_container);
+		}
 		
 	}
 }

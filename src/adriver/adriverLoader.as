@@ -2,8 +2,8 @@
 {
 	
 	import adriver.AdContainer;
-	import adriver.VK;
-	import adriver.getObjectFromXML;
+	import adriver.events.AdriverEvent;
+	import adriver.events.AdriverXMLEvent;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
@@ -35,7 +35,7 @@
 			_mc = mc;
 			_stage = _mc.root;
 			mc.addChild(this);
-		
+			
 			parameters.debug("adLoader added to stage");
 			
 //			this.x = parameters.style.x;
@@ -94,47 +94,28 @@
 			
 			parameters.debug("XML url: "+parameters.adriver_url);
 			
-			new getObjectFromXML(parameters, onScenarioXMLLoad);
-			
-//			var xml_loader:AdXMLLoader = new AdXMLLoader(parameters.adriver_url);
-//			xml_loader.addEventListener(Event.COMPLETE, onScenarioXMLLoad);
-//			xml_loader.loadXML();
-			
+			var xml_loader:AdriverGetObjectFromXML = new AdriverGetObjectFromXML(parameters);
+			xml_loader.addEventListener(AdriverXMLEvent.SUCCESS, onScenarioXMLLoad);
+			xml_loader.addEventListener(AdriverXMLEvent.ERROR, onScenarioXMLError);
+			xml_loader.loadXML();
 		}
 		
-		private function onScenarioXMLLoad(obj:Object):void
+		private function onScenarioXMLError(event:AdriverXMLEvent):void
 		{
+			parameters.debug("XML loading and parsing errors.");
+			this.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
+		}
+		
+		private function onScenarioXMLLoad(event:AdriverXMLEvent):void
+		{
+			
+			var obj:Object = event.obj;
 			
 			var video_url:String = obj.flv;
 			var image_url:String = obj.image;
 			var swf_url:String = obj.swf;
-			var pixel1_url:String = obj.pixel1;
-			var pixel2_url:String = obj.pixel2;
 			
-
 			parameters.eventUrl = obj.ar_event;
-			
-			if (pixel1_url) {
-				
-				parameters.debug("Try pixel1 url: "+pixel1_url);
-				
-				var request:URLRequest = new URLRequest(pixel1_url);
-				var loader:URLLoader = new URLLoader();
-				loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
-				loader.addEventListener(Event.COMPLETE, completeHandlerPixel);
-				loader.load(request);
-			}
-			
-			if (pixel2_url) {
-				
-				parameters.debug("Try pixel2 url: "+pixel2_url);
-				
-				var request:URLRequest = new URLRequest(pixel2_url);
-				var loader:URLLoader = new URLLoader();
-				loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandlerPixel);
-				loader.addEventListener(Event.COMPLETE, completeHandlerPixel);
-				loader.load(request);
-			}
 			
 			//image_url = "http://217.16.18.206/images/0000783/0000783234/0/popUnder300x250.swf";
 			
@@ -148,6 +129,10 @@
 					parameters.debug("Ad clicked in loader ");
 					obj.makeClick();
 				});
+				
+				addEventListener(AdriverEvent.PIXEL_ERROR, ioErrorHandlerPixel);
+				addEventListener(AdriverEvent.PIXEL_OK, completeHandlerPixel);
+				
 			}
 			
 			if (video_url) {
@@ -167,8 +152,8 @@
 			}
 		}
 		
-		private function ioErrorHandlerPixel(event:IOErrorEvent):void {
-			parameters.debug("Pixel load error: " + event + "\t" + event.target.url);
+		private function ioErrorHandlerPixel(event:Event):void {
+			parameters.debug("Pixel load error: " + event + "\t");
 		} 
 		
 		private function completeHandlerPixel(event:Event):void {
