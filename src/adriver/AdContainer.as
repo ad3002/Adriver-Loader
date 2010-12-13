@@ -1,7 +1,7 @@
 ﻿package adriver
 {
-	import adriver.getObjectFromXML;
 	import adriver.events.AdriverEvent;
+	import adriver.getObjectFromXML;
 	
 	import flash.display.Loader;
 	import flash.display.MovieClip;
@@ -23,9 +23,12 @@
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
+	import flash.text.TextField;
 	import flash.ui.Mouse;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
+	
+	
 	
 	
 	
@@ -56,6 +59,8 @@
 		
 		private var scenario_obj:Object;
 		
+		private var durationText:TextField;
+		
 		public function AdContainer(given_parameters:Object, mc)
 		{
 			super();
@@ -75,17 +80,47 @@
 				myTimer.addEventListener(TimerEvent.TIMER, onSkipTimer);
 				myTimer.start();
 			}
+			
 			resizer();
+			
 		}
 		
 		private function onSkipTimer(event:TimerEvent):void {
 			parameters.skip_button.enabled = true;
 		}
 		
+		private function show_duration():void {
+			
+			parameters.skip_button.label = parameters.skip_button_label + " (" + parameters.max_duration+")";
+			
+			var myTimer:Timer = new Timer(1000, parameters.max_duration);
+			myTimer.addEventListener(TimerEvent.TIMER, onTick);
+			myTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete); 
+			myTimer.start();
+			
+		}
+		
+		private function onTick(event:TimerEvent):void {
+			var i:int = parameters.max_duration - event.target.currentCount;
+			parameters.skip_button.label = parameters.skip_button_label + " (" + i+")";
+			
+		}
+		
+		private function onAdTimerComplete(event:TimerEvent):void {
+			event.target.removeEventListener(TimerEvent.TIMER, onTick);
+			event.target.removeEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete);
+			if (stream) {
+				stream.close();
+			}
+			
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LIMITED));
+		}
+		
 		private function resizer()
 		{
 			
 		}
+		
 		
 		private function onSkipClick(event:MouseEvent):void
 		{
@@ -116,7 +151,32 @@
 			loader.y = y;
 			addChild(loader);
 			
+			show_duration();
 			
+		}
+		
+		private function connectStream():void {
+			
+			stream = new NetStream(connection);
+			stream.client = new Object();
+			stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
+			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
+			
+			var video:Video = new Video();
+			video.attachNetStream(stream);
+			stream.play(_video_url);
+			addChild(video);
+			
+			parameters.debug("..video size: "+video.width+"x"+video.height);
+			
+			if (parameters.skip_button) {
+				parameters.debug("Button showed");
+				parameters.skip_button.x = video.width - parameters.skip_button.width;
+				parameters.skip_button.y = video.height - parameters.skip_button.height;
+				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
+			}
+			
+			show_duration();
 		}
 		
 		private function configureListeners(dispatcher:IEventDispatcher):void {
@@ -222,29 +282,6 @@
 			}
 		}
 		
-		private function connectStream():void {
-			
-			stream = new NetStream(connection);
-			
-			stream.client = new Object();
-			stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
-			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
-			
-			var video:Video = new Video();
-			video.attachNetStream(stream);
-			stream.play(_video_url);
-			addChild(video);
-			
-			parameters.debug("..video size: "+video.width+"x"+video.height);
-			
-			if (parameters.skip_button) {
-				parameters.debug("Button showed");
-				parameters.skip_button.x = video.width - parameters.skip_button.width;
-				parameters.skip_button.y = video.height - parameters.skip_button.height;
-				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
-			}
-		}
-	
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			parameters.debug("securityErrorHandler: " + event);
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));

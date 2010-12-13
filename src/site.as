@@ -1,6 +1,6 @@
 ﻿package
 {
-	import adriver.SocialEvent;
+	import adriver.events.SocialEvent;
 	import adriver.adriverLoader;
 	import adriver.events.AdriverEvent;
 	import adriver.AdriverVK;
@@ -32,7 +32,9 @@
 				ad_type: "pregame",
 				vk_secret: "JNi8W1YXui",
 				skip_button: sb,
-				skip_button_timeout: 3,
+				skip_button_timeout: 0,
+				max_duration: 1,
+				skip_button_label: "Skip",
 				user: {
 					uid: 1,
 					sex: 2,
@@ -137,6 +139,7 @@
 			ad.addEventListener(AdriverEvent.LOADED, onAdLoaded);
 			ad.addEventListener(AdriverEvent.SKIPPED, onAdSkipped);
 			ad.addEventListener(AdriverEvent.PROGRESS, onAdProgress);
+			ad.addEventListener(AdriverEvent.LIMITED, onAdLimited);
 			ad.loadAd();
 		}
 		
@@ -144,6 +147,11 @@
 		
 		private function onAdStarted(event:Event):void {
 			debug("Ad started");
+		}
+		
+		private function onAdLimited(event:Event):void {
+			debug("Ad limited");
+			onAdFinished(event);
 		}
 		
 		private function onAdFinished(event:Event):void {
