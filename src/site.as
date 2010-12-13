@@ -33,7 +33,7 @@
 				vk_secret: "JNi8W1YXui",
 				skip_button: sb,
 				skip_button_timeout: 0,
-				max_duration: 1,
+				max_duration: 10,
 				skip_button_label: "Skip",
 				user: {
 					uid: 1,
@@ -167,6 +167,7 @@
 		
 		private function onAdFailed(event:Event):void {
 			debug("Ad failed");
+			onAdFinished(event);
 		}
 		
 		private function onAdLoaded(event:Event):void {
