@@ -1,13 +1,14 @@
 ﻿package
 {
-	import adriver.events.SocialEvent;
+	import adriver.AdriverVK;
 	import adriver.adriverLoader;
 	import adriver.events.AdriverEvent;
-	import adriver.AdriverVK;
+	import adriver.events.SocialEvent;
 	
 	import fl.controls.TextArea;
 	
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	
 	
@@ -16,6 +17,8 @@
 	{
 		private var parameters:Object;
 		public static var debugger:TextArea;
+		
+		public var glass_container:Sprite;
 		
 		public function site()
 		{
@@ -42,6 +45,11 @@
 					country_name: "russia",
 					bdate: "1917-01-09"
 				},
+				style: {
+					width: stage.width,
+					height: stage.height,
+					align: 'center'
+				},				
 				adriver: {
 					// image 
 					// sid: 103134
@@ -132,6 +140,10 @@
 		}
 		
 		private function load_adriver():void {
+			
+			show_dark_glass();
+			this.setChildIndex(mc_with_ad, this.numChildren-1);
+			this.setChildIndex(sb, this.numChildren-1);
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);
 			ad.addEventListener(AdriverEvent.FINISHED, onAdFinished);
@@ -160,6 +172,8 @@
 			removeChild(mc_with_ad);
 			// remove skip button
 			removeChild(sb);
+			remove_dark_glass();
+			
 			// show app content
 			_content.x = 0;
 			_content.y = 0;
@@ -176,8 +190,7 @@
 		
 		private function onAdSkipped(event:AdriverEvent):void {
 			debug("Ad skipped");
-			removeChild(mc_with_ad);
-			removeChild(sb);
+			onAdFinished(event);
 		}
 		
 		private function onAdProgress(event:Event):void {
@@ -201,6 +214,18 @@
 			debugger.text += text + "\n";
 		}
 		
+		private function show_dark_glass():void {
+			glass_container = new Sprite();
+			addChild(glass_container);
+			glass_container.graphics.beginFill( 0x000000, .5 );
+			glass_container.graphics.drawRect( 0, 0, parameters.style.width, parameters.style.height );
+			glass_container.graphics.endFill();
+			this.setChildIndex(glass_container, this.numChildren-1);
+		}
+		
+		private function remove_dark_glass():void {
+			removeChild(glass_container);
+		}
 		
 	}
 }
