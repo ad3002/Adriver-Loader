@@ -36,23 +36,25 @@
 					country_name: "russia",
 					bdate: "1917-01-09"
 				},
-				style: {
-					color: "#CCCCCC",
-					width: 807,
-					height: 100,
-					x: 0,
-					y: 0
-				},				
+//				style: {
+//					color: "#CCCCCC",
+//					width: 807,
+//					height: 100,
+//					x: 0,
+//					y: 0
+//				},				
 				adriver: {
-					sid: 103134,
-					//ad: 256980
-					//ad: 217104
-					ad: 131439
+					// image 
+					// sid: 103134
+
+					// flv video
+					// sid: 103134,
+					// ad: 131439
 					
-//					sid: ,
-//					ad:
-					
-					//bid: 783234
+					// swf banner
+					sid: 1,
+					ad: 217104,
+					bid: 783234
 				},
 				debug: debug,
 				onAdSkipped: onAdSkipped
@@ -108,7 +110,7 @@
 		}
 		
 		private function onUserInfoError(event:SocialEvent):void {
-			
+
 			debug("Don't recive VK user info");
 			
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
