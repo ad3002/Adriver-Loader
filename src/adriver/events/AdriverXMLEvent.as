@@ -4,15 +4,24 @@ package adriver.events
 	
 	public class AdriverXMLEvent extends Event
 	{
-		public static const GET_PREROLL_LINK:String = "get_link";
+		public static const SUCCESS:String = "success";
+		public static const ERROR:String = "error";
 		
-		public function AdriverXMLEvent(type:String)
+		private var _obj:Object = [];
+		
+		public function AdriverXMLEvent(type:String, obj:Object)
 		{
 			super(type);
+			_obj = obj;
+		}
+		
+		public function get obj():Object 
+		{
+			return _obj	
 		}
 		
 		public override  function clone():Event {
-			return new AdriverXMLEvent(type);
+			return new AdriverXMLEvent(type, _obj);
 		}
 	}
 }
