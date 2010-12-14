@@ -23,6 +23,7 @@
 		public var ar_name;
 		public var ar_rnd:String = "";
 		public var ar_stages_trg:Object = [0,0,0,0,0,0,0,0,0,0];
+		public var ar_tns_pixel:String = null;
 		public var ar_zero_comppath;
 		
 		public var xml:XML;
@@ -113,6 +114,12 @@
 				this.ar_name = String(x.child('ar_name'));
 				this.ar_cgihref = String(x.child('ar_cgihref'));
 				this.ar_rnd = String(x.child('ar_rnd'));
+				this.ar_tns_pixel = String(x.child('ar_tns_pixel'));
+					
+				if (this.ar_tns_pixel != "") {
+					var loaderTns:URLLoader = new URLLoader();
+					loaderTns.load(new URLRequest(this.ar_tns_pixel));		
+				}
 	
 				this.ar_event = "http://ad.adriver.ru/cgi-bin/event.cgi?ntype=" + x.child('ar_ntype')
 								+ "&bid=" + x.child('ar_bid')
