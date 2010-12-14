@@ -67,18 +67,17 @@
 		}
 		
 		public function sendEvent(stage:int):void {
-			if (this.ar_stages_trg[stage] == 0) {
-				this.ar_stages_trg[stage] = 1;
-				sendPixel(this.ar_event + stage, 100 + stage);
-			}
+  			if (this.ar_stages_trg[stage] == 0) {
+   				this.ar_stages_trg[stage] = 1;
+    			sendPixel(this.ar_event + stage);
+  			}
 		}
-		
-		public function sendPixel(u:String = null, level:Number = 0):void {
+		public function sendPixel(u:String = null):void {
 			if (!u) {
 				return;
-			} 
-			level = level || (111 + Math.round(Math.random()*10));
-			sendToURL(new URLRequest(this.repRnd(u)));
+			}
+		  
+		  sendToURL(new URLRequest(this.repRnd(u)));
 		}
 		
 		public function init():void {
@@ -87,15 +86,13 @@
 		
 		public function loadXML() {
 			
-			var rndPattern:RegExp = /!\[rnd\]/;  
-			first_url.replace(rndPattern, String(Math.round(Math.random()*100000000)));
+			first_url = repRnd(first_url);
+
 			var loader = new URLLoader();
 			loader.addEventListener(Event.COMPLETE, onXMLLoadSuccess);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, onXMLLoadError);
 			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onXMLLoadError);
 			loader.load(new URLRequest(first_url));
-		
-			//url = url.split('![rnd]').join('' + Math.round(Math.random()*100000000));
 		
 		}
 		

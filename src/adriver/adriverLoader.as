@@ -129,10 +129,7 @@
 					parameters.debug("Ad clicked in loader ");
 					obj.makeClick();
 				});
-				
-				addEventListener(AdriverEvent.PIXEL_ERROR, ioErrorHandlerPixel);
-				addEventListener(AdriverEvent.PIXEL_OK, completeHandlerPixel);
-				
+					
 			}
 			
 			if (video_url) {
@@ -151,14 +148,6 @@
 				parameters.debug("Empty banner");				
 			}
 		}
-		
-		private function ioErrorHandlerPixel(event:Event):void {
-			parameters.debug("Pixel load error: " + event + "\t");
-		} 
-		
-		private function completeHandlerPixel(event:Event):void {
-			parameters.debug("Pixel load complete: "+ event.target.url);
-		}		
 		
 		private function get_right_custom(custom:Object):String {
 			
