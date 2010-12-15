@@ -12,9 +12,6 @@ package adriver.events
 		public static const LOADED:String = "loaded;"
 		public static const SKIPPED:String = "skipped";
 		public static const PROGRESS:String = "progress";
-		public static const PIXEL_OK:String = "pixel_ok";
-		public static const PIXEL_ERROR:String = "pixel_error";
-		
 		
 		public function AdriverEvent(type:String)
 		{
