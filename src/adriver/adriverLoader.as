@@ -62,7 +62,7 @@
 				_loadAd();	
 			}
 		}
-		
+
 		private function _loadAd():void {
 			
 			// create request to adriver
@@ -79,6 +79,9 @@
 			
 			param_custom = get_right_custom(custom_list);
 			
+			if (!parameters.adriver["sid"])
+				parameters.debug("sid is mandatory, you have forgotten it, xml error will follow");
+				
 			// build adriver params
 			var b = [], i=0, adriverParms="";
 			for (i in parameters.adriver) {
@@ -86,11 +89,8 @@
 			}
 			b.push("bt=54");
 			b.push("rnd="+Math.round(Math.random()*100000000));
-			
-			if (ExternalInterface.call("window.location.href.toString")) {
-				b.push("ref="+escape(ExternalInterface.call("window.location.href.toString")));			
-			}
-			
+			b.push("ref=http://vkontakte.ru/app" + parameters.api_id);
+
 			adriverParms = b.join('&');
 			
 			var adriver_parameters:String;
@@ -110,7 +110,7 @@
 		
 		private function onScenarioXMLError(event:AdriverXMLEvent):void
 		{
-			parameters.debug("XML loading and parsing errors.");
+			parameters.debug("XML loading or parsing errors. "+ event);
 			this.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
