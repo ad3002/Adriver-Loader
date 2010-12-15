@@ -35,7 +35,6 @@
 		private var count:Number = 0;
 		private var res:Array = [];
 		private var params:Object = [];
-		private var req:String;
 		
 		private var ad_links:Dictionary = new Dictionary();
 		
@@ -62,9 +61,6 @@
 			super();
 			parameters = given_parameters;
 			_parent = mc;
-			//Stage.align = 'TL';
-			//Stage.scaleMode = 'noScale';
-			//Stage.addListener({onResize:resizer});
 			
 			if (parameters.skip_button) {
 				parameters.skip_button.enabled = false;
@@ -76,33 +72,30 @@
 				skip_timer.addEventListener(TimerEvent.TIMER, onSkipTimer);
 				skip_timer.start();
 			}
-			
-			resizer();
-			
 		}
 		
 		private function onSkipTimer(event:TimerEvent):void {
 			parameters.skip_button.enabled = true;
 		}
 		
-		private function show_duration():void {
-			
+		private function show_duration():void 
+		{
 			parameters.skip_button.label = parameters.skip_button_label + " (" + parameters.max_duration+")";
 			
 			duration_timer = new Timer(1000, parameters.max_duration);
 			duration_timer.addEventListener(TimerEvent.TIMER, onTick);
 			duration_timer.addEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete); 
 			duration_timer.start();
-			
 		}
 		
-		private function onTick(event:TimerEvent):void {
+		private function onTick(event:TimerEvent):void 
+		{
 			var i:int = parameters.max_duration - event.target.currentCount;
 			parameters.skip_button.label = parameters.skip_button_label + " (" + i+")";
-			
 		}
 		
-		private function onAdTimerComplete(event:TimerEvent):void {
+		private function onAdTimerComplete(event:TimerEvent):void 
+		{
 			if (stream) {
 				stream.close();
 			}
@@ -113,8 +106,8 @@
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LIMITED));
 		}
 		
-		private function clean_container():void {
-			
+		private function clean_container():void 
+		{
 			if(parameters.max_duration>0) {
 				duration_timer.removeEventListener(TimerEvent.TIMER, onTick);
 				duration_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete);
@@ -122,82 +115,71 @@
 				}
 				
 			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
+			
 			if (stream) {
 				stream.close();
 			}
 		}
 		
-		
-		private function resizer()
-		{	
-		}
-		
-		
 		private function onSkipClick(event:MouseEvent):void
 		{
-			parameters.debug("Skip button clicked in container");
+			parameters.debug("AD: Skip button clicked in container");
 			clean_container();
 			sendEvent(AdriverEvent.SKIPPED);
-
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
 		private function onVideoSkipClick(event:MouseEvent):void
 		{
-			parameters.debug("Skip button clicked in container");
+			parameters.debug("AD: Skip button clicked in container");
 			clean_container();
 			sendEvent(AdriverEvent.SKIPPED);
-
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
-		public function loadBanner(url:String, x:int, y:int) {
-			
-			parameters.debug("Trying load banner: "+url);
+		public function loadBanner(url:String, x:int, y:int) 
+		{			
+			parameters.debug("AD: Loading banner");
 			var loader:Loader = new Loader();
 			configureListeners(loader.contentLoaderInfo);
-			//loader.addEventListener(MouseEvent.CLICK, clickHandler);
 			var request:URLRequest = new URLRequest(url);
 			loader.load(request);
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
 			sendEvent(AdriverEvent.STARTED);
-			//sendPixels();
+			
 			if(parameters.max_duration>0) {
 				show_duration();
 			}
-			
 		}
 		
-		private function connectStream():void {
-			
+		private function connectStream():void 
+		{
 			stream = new NetStream(connection);
 			stream.client = new Object();
 			stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
-			
 			var video:Video = new Video();
 			video.attachNetStream(stream);
 			stream.play(_video_url);
 			addChild(video);
-			
-			parameters.debug("..video size: "+video.width+"x"+video.height);
+			parameters.debug("AD: ..video size: "+video.width+"x"+video.height);
 			
 			if (parameters.skip_button) {
-				parameters.debug("Button showed");
+				parameters.debug("AD: Button showed");
 				parameters.skip_button.x = video.width - parameters.skip_button.width;
 				parameters.skip_button.y = video.height - parameters.skip_button.height;
 				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
 			}
-			sendEvent(AdriverEvent.STARTED);
-			//sendPixels();
+			
 			if(parameters.max_duration>0) {
 				show_duration();
 			}
 		}
 		
-		private function configureListeners(dispatcher:IEventDispatcher):void {
+		private function configureListeners(dispatcher:IEventDispatcher):void 
+		{
 			dispatcher.addEventListener(Event.COMPLETE, completeHandler);
 			dispatcher.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
 			dispatcher.addEventListener(Event.INIT, initHandler);
@@ -207,20 +189,21 @@
 			dispatcher.addEventListener(Event.UNLOAD, unLoadHandler);
 		}
 		
-		private function sendEvent(event:String):void {
-
+		private function sendEvent(event:String):void
+		{
 			if (parameters.eventUrl) {
-				parameters.debug("Logging adriver event: " +event);
+				parameters.debug("AD: Logging adriver event: " +event);
 				var request:URLRequest = new URLRequest(parameters.eventUrl+AdriverEvent.EventMap[event]);
 				var loader:URLLoader = new URLLoader();
 				loader.load(request);				
 			}
 		}
 		
-		private function completeHandler(event:Event):void {
+		private function completeHandler(event:Event):void 
+		{
 			//trace("completeHandler: " + event + "\n");
-			
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
+			
 			if (parameters.skip_button) {
 				parameters.skip_button.x = event.target.width;
 				parameters.skip_button.y = event.target.height - parameters.skip_button.height;
@@ -228,30 +211,36 @@
 			}
 		}
 		
-		private function httpStatusHandler(event:HTTPStatusEvent):void {
+		private function httpStatusHandler(event:HTTPStatusEvent):void 
+		{
 			//trace("httpStatusHandler: " + event + "\n");
 		}
 		
-		private function initHandler(event:Event):void {
+		private function initHandler(event:Event):void 
+		{
 			//trace("initHandler: " + event + "\n");
 		}
 		
-		private function ioErrorHandler(event:IOErrorEvent):void {
+		private function ioErrorHandler(event:IOErrorEvent):void 
+		{
 			//trace("ioErrorHandler: " + event + "\n");
 			clean_container();
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
-		private function openHandler(event:Event):void {
+		private function openHandler(event:Event):void 
+		{
 			//trace("openHandler: " + event + "\n");
 		}
 		
-		private function progressHandler(event:ProgressEvent):void {
+		private function progressHandler(event:ProgressEvent):void 
+		{
 			//trace("progressHandler: bytesLoaded=" + event.bytesLoaded + " bytesTotal=" + event.bytesTotal + "\n");
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.PROGRESS));
 		}
 		
-		private function unLoadHandler(event:Event):void {
+		private function unLoadHandler(event:Event):void 
+		{
 			//trace("unLoadHandler: " + event + "\n");
 		}
 		
@@ -264,44 +253,48 @@
 			connection.connect(null);
 		}
 		
-		private function netStatusHandler(event:NetStatusEvent):void {
-			parameters.debug("..net event: "+event.info.code);
+		private function netStatusHandler(event:NetStatusEvent):void 
+		{
+			parameters.debug("AD: ..net event: "+event.info.code);
+			
 			switch (event.info.code) {
 				case "NetConnection.Connect.Success":
-					parameters.debug("..videp stream connect");
+					parameters.debug("AD: ..video stream connect");
 					connectStream();
+					sendEvent(AdriverEvent.STARTED);
 					break;
 				case "NetStream.Play.StreamNotFound":
-					parameters.debug("..Unable to locate video: " + _video_url);
+					parameters.debug("AD: ..Unable to locate video: " + _video_url);
 					clean_container();
 					sendEvent(AdriverEvent.FAILED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 					break;
 				case "NetStream.Play.Failed":
-					parameters.debug("Play failed: " + _video_url);
+					parameters.debug("AD: Play failed: " + _video_url);
 					clean_container();
 					sendEvent(AdriverEvent.FAILED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 				case "NetStream.Play.Stop":
 					clean_container();
-					parameters.debug("Play finished: " + _video_url);
+					parameters.debug("AD: Play finished: " + _video_url);
 					sendEvent(AdriverEvent.FINISHED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));
-//				case "NetStream.Play.Switch":
-//					parameters.debug("Play switched: " + _video_url);
-//					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));	
+				default:
+					parameters.debug("AD: Play failed. Unknown event: " + event.info.code)
+					sendEvent(AdriverEvent.FAILED);
+					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 			}
 		}
 		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
-			parameters.debug("securityErrorHandler: " + event);
+			parameters.debug("AD: securityErrorHandler: " + event);
 			clean_container();
 			sendEvent(AdriverEvent.FAILED);
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
 		private function asyncErrorHandler(event:AsyncErrorEvent):void {
-			parameters.debug("securityAsyncErrorEvent: " + event);
+			parameters.debug("AD: securityAsyncErrorEvent: " + event);
 		}	
 	}
 }

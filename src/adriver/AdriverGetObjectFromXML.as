@@ -14,8 +14,7 @@
 
 	public class AdriverGetObjectFromXML extends EventDispatcher {	
 		
-		private var parameters:Object;
-		public var first_url:String;
+		private var _debug:Function;
 		
 		public var ar_cgihref:String = "";
 		public var ar_comppath;
@@ -36,44 +35,38 @@
 		
 		private var _parent:Object;
 		
-		public function AdriverGetObjectFromXML(aParameters:Object)
+		public function AdriverGetObjectFromXML(debug:Function)
 		{
-			first_url = aParameters.adriver_url;
-			parameters = aParameters;
+			_debug = debug;
 		}
 		
-		public function repRnd(url:String):String {
+		public function repRnd(url:String):String 
+		{
 			return url.split('![rnd]').join('' + this.ar_rnd);
 		}
 		
-		public function makeClick(url:String=null):void {
-			
-			parameters.debug("Was clicked: "+url);
-			
+		public function makeClick(url:String=null):void 
+		{
 			try {
-				parameters.debug("Handle click in xmlObject");
-				parameters.debug("Does it have wrapper? "+parameters.vkontakte_hasWrapper);
+				_debug("XML: Processing click");
 				url = this.ar_cgihref + '&rleurl=' + escape(url || '');
-				parameters.debug("..URL: "+url);
-				if (parameters.vkontakte_hasWrapper) {
-					parameters.debug("....wrapper case");
-					navigateToURL(new URLRequest(url), '_blank');
-				} else {
-					parameters.debug("....no wrapper case");
-					navigateToURL(new URLRequest(url), '_blank');
-				}
+				_debug("XML: navigating to URL: "+url);
+				navigateToURL(new URLRequest(url), '_blank');
 			} catch (error:Error) {
 				dispatchEvent(new AdriverXMLEvent(AdriverXMLEvent.ERROR, error));
 			}
 		}
 		
-		public function sendEvent(stage:int):void {
+		public function sendEvent(stage:int):void 
+		{
   			if (this.ar_stages_trg[stage] == 0) {
    				this.ar_stages_trg[stage] = 1;
     			sendPixel(this.ar_event + stage);
   			}
 		}
-		public function sendPixel(u:String = null):void {
+		
+		public function sendPixel(u:String = null):void 
+		{
 			if (!u) {
 				return;
 			}
@@ -81,32 +74,28 @@
 		  sendToURL(new URLRequest(this.repRnd(u)));
 		}
 		
-		public function init():void {
-				
-		}
-		
-		public function loadXML() {
-			
-			first_url = repRnd(first_url);
-
+		public function loadXML(url:String) 
+		{
 			var loader = new URLLoader();
+
+			url = repRnd(url);
 			loader.addEventListener(Event.COMPLETE, onXMLLoadSuccess);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, onXMLLoadError);
 			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onXMLLoadError);
-			loader.load(new URLRequest(first_url));
+			loader.load(new URLRequest(url));
 		
 		}
 		
-		private function onXMLLoadError(event:Event):void {
-			parameters.debug('error: ' + event + '\n location: ' + event.target.url);
+		private function onXMLLoadError(event:Event):void 
+		{
+			_debug('error: ' + event + '\n location: ' + event.target.url);
 			dispatchEvent(new AdriverXMLEvent(AdriverXMLEvent.ERROR, event));
 		}
 		
-		private function onXMLLoadSuccess(event:Event):void {
-			
+		private function onXMLLoadSuccess(event:Event):void 
+		{
 			try {
 				var xml = new XML(event.target.data);
-				
 				var x = xml.elements('*')[0];
 				
 				this.ar_zero_comppath = String(x.child('ar_zero_comppath'));
@@ -132,8 +121,8 @@
 								+ "&type=";
 	
 				var second_url:String = this.ar_comppath + this.ar_name;
-				
 				var loader = new URLLoader();
+				
 				loader.addEventListener(Event.COMPLETE, onSecondXMLLoadSuccess);
 				loader.addEventListener(IOErrorEvent.IO_ERROR, onXMLLoadError);
 				loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onXMLLoadError);
@@ -144,13 +133,16 @@
 			
 		}
 			
-		private function get_path(obj, s, v){
+		private function get_path(obj, s, v)
+		{
+			// this is pure evil code, never write like this please
 			var _ = s.child('content_'+v), c = '' + _.child('localUrl');
+			
 			return obj.repRnd(c&&c!='' ? obj['ar_zero_comppath'] + c : _.child('locationUrl'));
 		}
 			
-		private function onSecondXMLLoadSuccess(event:Event):void {
-			
+		private function onSecondXMLLoadSuccess(event:Event):void 
+		{		
 			var xml = new XML(event.target.data);
 			
 			this.xml = xml;
@@ -159,14 +151,10 @@
 			this.swf = get_path(this, xml, 'swf');
 			this.image = get_path(this, xml, 'image');
 
-			
 			this.pixel1 = '' + xml.child('pixelCounter').child('counter1');
 			this.pixel2 = '' + xml.child('pixelCounter').child('counter2');
-			
-			this.init();
-			
+						
 			dispatchEvent(new AdriverXMLEvent(AdriverXMLEvent.SUCCESS, this));
-			
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package vkontakte.vk.api {
+﻿package vkontakte.vk.api {
   
   import flash.net.*;
   import flash.errors.*;
@@ -52,13 +52,13 @@ package vkontakte.vk.api {
 		  'options' : options,
 		  'flag' : false
 	  };
-	trace('------------------------------------------------------------------');
-	trace('REQUEST:     \nmethod - '+method+'\nparameters - ');
-	for (var y in options.params)
-	{
-		trace('     '+y + ': '+options.params[y]);
-	}
-	trace('------------------------------------------------------------------');
+//	trace('------------------------------------------------------------------');
+//	trace('REQUEST:     \nmethod - '+method+'\nparameters - ');
+//	for (var y in options.params)
+//	{
+//		trace('     '+y + ': '+options.params[y]);
+//	}
+//	trace('------------------------------------------------------------------');
 	if (!(_mQueue))
 		_mQueue = [];
 	
@@ -174,9 +174,9 @@ package vkontakte.vk.api {
 	function onVKAnswer(e:Event):void
 	{
         var loader:URLLoader = URLLoader(e.target);
-		trace('------------------------------------------------------------------');
-		trace('REQUEST COMPLETE: \n'+loader.data);
-		trace('------------------------------------------------------------------');
+//		trace('------------------------------------------------------------------');
+//		trace('REQUEST COMPLETE: \n'+loader.data);
+//		trace('------------------------------------------------------------------');
 		_mQueue.shift();
 		var data: Object = JSON.decode(loader.data);
         if (data.error) 

@@ -1,26 +1,16 @@
 ﻿package
 {
-//	import adriver.AdriverVK;
-//	import adriver.adriverLoader;
-//	import adriver.events.AdriverEvent;
-//	import adriver.events.SocialEvent;
-//	
 	import adriver.*
 	import adriver.events.*
-	
 	import fl.controls.TextArea;
-	
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	
-	
 	
 	public class site extends MovieClip
 	{
 		private var parameters:Object;
 		public static var debugger:TextArea;
-		
 		public var glass_container:Sprite;
 		
 		public function site()
@@ -29,10 +19,9 @@
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage); 
 		}
 		
-		private function onAddedToStage(e: Event):void { 
-			
+		private function onAddedToStage(e:Event):void 
+		{ 
 			init_debbuger();
-			
 			var YOUR_SITE_ID_IN_ADRIVER:Number = 103134;
 			
 			parameters = {
@@ -104,8 +93,9 @@
 			
 			if (parameters.social_network == 'vkontakte') {
 				var vkontakte_wrapper: Object = Object(parent.parent); 
+				
 				if (!vkontakte_wrapper.application) {
-					debug("App hasn't wrapper");
+					debug("APP: App has no vkontakte wrapper");
 					parameters["vkontakte_hasWrapper"] = false;
 					parameters["flashVars"] = stage.loaderInfo.parameters as Object;
 
@@ -115,18 +105,13 @@
 						parameters["flashVars"]["api_secret"] = parameters.api_secret;
 						parameters["flashVars"]["api_test_mode"] = parameters.api_test_mode;
 					}
-				} else {
-					debug("App has wrapper");
+				} 
+				else {
+					debug("APP: App has vkontakte wrapper");
 					parameters["vkontakte_hasWrapper"] = true;
 					parameters["vkontakte_wrapper"] = vkontakte_wrapper;
 					parameters["flashVars"] = vkontakte_wrapper.application.parameters;
 				}
-				 
-//				// debug flashVars
-//				for (var i in parameters.flashVars)
-//				{
-//					debug(i+": "+ parameters.flashVars[i]);
-//				}
 				
 				load_user_params();
 			}
@@ -135,56 +120,32 @@
 			}
 		}
 		
-		private function load_user_params():void {
-		
+		private function load_user_params():void 
+		{
 			var module_vk:AdriverVK = new AdriverVK();
 			module_vk.init(parameters.flashVars);
 			module_vk.commandGetProfiles(onUserInfoFull, onUserInfoEmpty);
 		}
 		
-		private function onUserInfoFull(obj:Object):void {	
-			debug("Receive VK user info");	
+		private function onUserInfoFull(obj:Object):void 
+		{	
+			debug("APP: Receive VK user info");	
 			parameters.user = obj;
-
-			debug('\nFINAL PARAMETERS:\n');
-			for (var i in parameters)
-			{
-				debug(String('\t'+i+': '+parameters[i]));
-				for (var j in parameters[i])
-				{
-					if (parameters[i][j])
-					{
-						debug(String('\t\t'+j+': '+parameters[i][j]));
-					}
-				}
-			};
-			debug('\n');
 			load_adriver();
 		}
 		
-		private function onUserInfoEmpty():void {
-			debug("Don't receive VK user info");	
-			debug('\nFINAL PARAMETERS:\n');
-			for (var i in parameters)
-			{
-				debug(String(i+': '+parameters[i]));
-				for (var j in parameters[i])
-				{
-					if (parameters[i][j])
-					{
-						debug(String('\t'+j+': '+parameters[i][j]))
-					}
-				}
-			}
-			debug('\n');
+		private function onUserInfoEmpty():void 
+		{
+			debug("APP: Did not receive VK user info");	
 			load_adriver();
 		}
 		
-		private function load_adriver():void {
-			
+		private function load_adriver():void 
+		{
 			show_dark_glass();
 			this.setChildIndex(mc_with_ad, this.numChildren-1);
 			this.setChildIndex(sb, this.numChildren-1);
+			// initialising adriver module with external movie clip object and parameters
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);
 			ad.addEventListener(AdriverEvent.FINISHED, onAdFinished);
@@ -198,49 +159,56 @@
 		
 		// events
 		
-		private function onAdStarted(event:Event):void {
-			debug("Ad started");
+		private function onAdStarted(event:Event):void 
+		{
+			debug("APP: Ad started");
 		}
 		
-		private function onAdLimited(event:Event):void {
-			debug("Ad limited");
+		private function onAdLimited(event:Event):void 
+		{
+			debug("APP: Ad limited");
 			onAdFinished(event);
 		}
 		
-		private function onAdFinished(event:Event):void {
-			debug("Ad finished");
+		private function onAdFinished(event:Event):void 
+		{
+			debug("APP: Ad finished");
 			// remove ad container
 			removeChild(mc_with_ad);
 			// remove skip button
 			removeChild(sb);
 			remove_dark_glass();
-			
 			// show app content
 			_content.x = 0;
 			_content.y = 0;
 		}
 		
-		private function onAdFailed(event:Event):void {
-			debug("Ad failed");
+		private function onAdFailed(event:Event):void 
+		{
+			debug("APP: Ad failed");
 			onAdFinished(event);
 		}
 		
-		private function onAdLoaded(event:Event):void {
-			debug("Ad loaded");
+		private function onAdLoaded(event:Event):void
+		{
+			debug("APP: Ad loaded");
 		}
 		
-		private function onAdSkipped(event:AdriverEvent):void {
-			debug("Ad skipped");
+		private function onAdSkipped(event:AdriverEvent):void 
+		{
+			debug("APP: Ad skipped");
 			onAdFinished(event);
 		}
 		
-		private function onAdProgress(event:Event):void {
-			debug("Ad is loading...");
+		private function onAdProgress(event:Event):void 
+		{
+			debug("APP: Ad is loading...");
 		}
 		
 		// debbuger
 		
-		private function init_debbuger():void {
+		private function init_debbuger():void 
+		{
 			var message:TextArea = new TextArea();
 			message.width = 400;
 			message.height = 300;
@@ -248,14 +216,16 @@
 			message.y = 95;
 			addChild(message);
 			debugger = message;
-			debug("Loaded");
+			debug("APP: Loaded");
 		}
 		
-		private function debug(text:String):void {
+		private function debug(text:String):void 
+		{
 			debugger.text += text + "\n";
 		}
 		
-		private function show_dark_glass():void {
+		private function show_dark_glass():void 
+		{
 			glass_container = new Sprite();
 			addChild(glass_container);
 			glass_container.graphics.beginFill( 0x000000, .5 );
@@ -264,7 +234,8 @@
 			this.setChildIndex(glass_container, this.numChildren-1);
 		}
 		
-		private function remove_dark_glass():void {
+		private function remove_dark_glass():void 
+		{
 			removeChild(glass_container);
 		}
 		

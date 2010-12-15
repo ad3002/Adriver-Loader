@@ -9,21 +9,15 @@
 		private var vk_parameters:Object;
 		private var callbackComplete:Function;
 		private var callbackError:Function;
-		
-		public function NVM_VK() {
-		}
-		
-		public function init(app_parameters:Object):void {
+
+		public function init(app_parameters:Object):void 
+		{
 			vk_parameters = app_parameters;
 		}
 		
-		public function commandGetProfiles(aCallbackComplete:Function, aCallbackError:Function):void {
+		public function commandGetProfiles(aCallbackComplete:Function, aCallbackError:Function):void 
+		{
 			var api:APIConnection = new APIConnection(vk_parameters);
-			
-			callbackComplete = aCallbackComplete;
-			callbackError = aCallbackError;
-			
-			
 			var executeCode:String = '\
 				var profile = API.getProfiles({"uids": "' + vk_parameters.viewer_id + '", "fields": "bdate,sex,education,city,country,rate"});\
 				var uid = profile[0].uid;\
@@ -38,21 +32,28 @@
 				"city_name": city_name,\
 				"country_name": country_name\
 				};';
+				
+						
+			callbackComplete = aCallbackComplete;
+			callbackError = aCallbackError;
 			api.api("execute", {code: executeCode}, onSuccess, onError);
 		}
 		
-		private function onSuccess(response:Object):void {
+		private function onSuccess(response:Object):void 
+		{
 			if (response.bdate == null) {
 				response.bdate = '0.0.0';
 			}
+			
 			response.city_name = (response.city_name as String).toLocaleLowerCase();
 			response.country_name = (response.country_name as String).toLocaleLowerCase();
 			response.uid = vk_parameters.viewer_id;
 			callbackComplete(response);
 		}
 		
-		private function onError(error:Object):void {
-			trace("Error", error);
+		private function onError(error:Object):void 
+		{
+//			trace("Error", error);
 			callbackError();
 		}
 		
