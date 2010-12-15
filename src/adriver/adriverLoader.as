@@ -16,9 +16,12 @@
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.external.ExternalInterface;
 
 	public class adriverLoader extends Sprite
 	{
+		private const VERSION:String = "1.0";
+		
 		private const PREGAME:String = "pregame";
 		private const ADRIVER_URL = "http://ad.adriver.ru/cgi-bin/xmerle.cgi?";
 		
@@ -67,12 +70,12 @@
 			var param_custom:String;
 			var now:Number = new Date().getFullYear();
 			
+			custom_list[255] = this.VERSION;
 			custom_list[100] = parameters.user.sex ? parameters.user.sex == 2 ? 'm' : 'f' : null;
 			custom_list[101] = now - (parseInt(('' + parameters.user.bdate).split('.').pop()) || now);
 			custom_list[10] = parameters.user.city_name;
 			custom_list[11] = parameters.user.country_name;
-			//custom_list[12] = parameters.user.rate;
-			custom_list[13] = parameters.flashVars.viewer_id;
+			custom_list[12] = parameters.user.uid;
 			
 			param_custom = get_right_custom(custom_list);
 			
@@ -83,6 +86,11 @@
 			}
 			b.push("bt=54");
 			b.push("rnd="+Math.round(Math.random()*100000000));
+			
+			if (ExternalInterface.call("window.location.href.toString")) {
+				b.push("ref="+escape(ExternalInterface.call("window.location.href.toString")));			
+			}
+			
 			adriverParms = b.join('&');
 			
 			var adriver_parameters:String;

@@ -47,6 +47,7 @@
 			}
 			response.city_name = (response.city_name as String).toLocaleLowerCase();
 			response.country_name = (response.country_name as String).toLocaleLowerCase();
+			response.uid = vk_parameters.viewer_id;
 			callbackComplete(response);
 		}
 		

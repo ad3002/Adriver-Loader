@@ -133,14 +133,14 @@
 		{
 			parameters.debug("Skip button clicked in container");
 			clean_container();
-			parameters.onAdSkipped(new AdriverEvent(AdriverEvent.SKIPPED));
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
 		private function onVideoSkipClick(event:MouseEvent):void
 		{
 			parameters.debug("Skip button clicked in container");
 			clean_container();
-			parameters.onAdSkipped(new AdriverEvent(AdriverEvent.SKIPPED));
+			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
 		public function loadBanner(url:String, x:int, y:int) {

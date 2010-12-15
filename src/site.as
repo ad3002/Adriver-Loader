@@ -1,9 +1,12 @@
 ﻿package
 {
-	import adriver.AdriverVK;
-	import adriver.adriverLoader;
-	import adriver.events.AdriverEvent;
-	import adriver.events.SocialEvent;
+//	import adriver.AdriverVK;
+//	import adriver.adriverLoader;
+//	import adriver.events.AdriverEvent;
+//	import adriver.events.SocialEvent;
+//	
+	import adriver.*
+	import adriver.events.*
 	
 	import fl.controls.TextArea;
 	
@@ -31,13 +34,13 @@
 			init_debbuger();
 			
 			parameters = {
-				social_network: "vkontakte",
+//				social_network: "vkontakte",
+//				vk_secret: "JNi8W1YXui",
 				ad_type: "pregame",
-				vk_secret: "JNi8W1YXui",
 				skip_button: sb,
+				skip_button_label: "Skip",
 				skip_button_timeout: 0,
 				max_duration: 10,
-				skip_button_label: "Skip",
 				user: {
 					uid: 1,
 					sex: 2,
@@ -62,35 +65,40 @@
 					// ad: 217104,
 					// bid: 783234
 				},
-				debug: debug,
-				onAdSkipped: onAdSkipped
+				debug: debug
+				//onAdSkipped: onAdSkipped
 			};
 			
 			// bring skip buttom to front
 			this.setChildIndex(sb, numChildren-1);
 			
-			var vkontakte_wrapper: Object = Object(parent.parent); 
-			if (!vkontakte_wrapper.application) {
-				debug("App hasn't wrapper");
-				parameters["vkontakte_hasWrapper"] = false;
-				parameters["flashVars"] = stage.loaderInfo.parameters as Object;
-				if (!parameters["flashVars"]["viewer_id"]) {
-					parameters["flashVars"]["viewer_id"] = 0;	
+			if (parameters.social_network == 'vkontakte') {
+				var vkontakte_wrapper: Object = Object(parent.parent); 
+				if (!vkontakte_wrapper.application) {
+					debug("App hasn't wrapper");
+					parameters["vkontakte_hasWrapper"] = false;
+					parameters["flashVars"] = stage.loaderInfo.parameters as Object;
+					if (!parameters["flashVars"]["viewer_id"]) {
+						parameters["flashVars"]["viewer_id"] = 0;	
+					}
+				} else {
+					debug("App has wrapper");
+					parameters["vkontakte_hasWrapper"] = true;
+					parameters["vkontakte_wrapper"] = vkontakte_wrapper;
+					parameters["flashVars"] = vkontakte_wrapper.application.parameters;
 				}
-			} else {
-				debug("App has wrapper");
-				parameters["vkontakte_hasWrapper"] = true;
-				parameters["vkontakte_wrapper"] = vkontakte_wrapper;
-				parameters["flashVars"] = vkontakte_wrapper.application.parameters;
+				 
+//				// debug flashVars
+//				for (var i in parameters.flashVars)
+//				{
+//					debug(i+": "+ parameters.flashVars[i]);
+//				}
+				
+				load_user_params();
 			}
-			 
-			// debug flashVars
-			for (var i in parameters.flashVars)
-			{
-				debug(i+": "+ parameters.flashVars[i]);
+			else {
+				load_adriver();
 			}
-			
-			load_user_params();
 		}
 		
 		private function load_user_params():void {
