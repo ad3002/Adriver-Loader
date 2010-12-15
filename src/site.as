@@ -36,6 +36,13 @@
 			var YOUR_SITE_ID_IN_ADRIVER:Number = 103134;
 			
 			parameters = {
+				// adriver parameters
+				adriver: {
+					// your site id in adriver
+					// mandatory
+					sid: YOUR_SITE_ID_IN_ADRIVER
+				},
+				
 				// what social network to query for user data. 
 				// currently only vkontakte is supported. 
 				// can be commented out if you don't want module to perform query or 
@@ -87,13 +94,6 @@
 					width: stage.width,
 					height: stage.height
 				},				
-				
-				// adriver parameters
-				adriver: {
-					// your site id in adriver
-					// mandatory
-					sid: YOUR_SITE_ID_IN_ADRIVER
-				},
 				
 				// debug function
 				debug: debug
