@@ -6,7 +6,6 @@ package vkontakte.vk {
 
   import vkontakte.vk.api.CustomEvent;
   import vkontakte.vk.api.DataProvider;
-//  //import com.junkbyte.console.Cc;
 
 
   /**
@@ -27,10 +26,10 @@ package vkontakte.vk {
 	  if (typeof(params[0]) == 'string') {
 	    connectionName = params[0];
 	  } else {
-	    connectionName = params[0].lc_name;
+	    connectionName = params[0].social_network;
 		var api_url: String = 'http://api.vkontakte.ru/api.php';
 		if (params[0].api_url) api_url = params[0].api_url;
-		dp = new DataProvider(api_url, params[0].api_id, params[0].sid, params[0].secret, params[0].viewer_id);
+		dp = new DataProvider(api_url, params[0].api_id, params[0].api_secret, params[0].viewer_id, params[0].api_test_mode);
 	  }
 	  if (!connectionName) return;
 	  pendingRequests = new Array();

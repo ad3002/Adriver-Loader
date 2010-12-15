@@ -1,4 +1,4 @@
-﻿package vkontakte.vk.api {
+package vkontakte.vk.api {
   
   import flash.net.*;
   import flash.errors.*;
@@ -7,12 +7,11 @@
   import flash.events.TimerEvent;
   
   import vkontakte.vk.api.serialization.json.*;
-//  import com.junkbyte.console.Cc;
   
   public class DataProvider {    
-	private var _api_sid: String;
 	private var _api_url: String = "http://api.vkontakte.ru/api.php";
     private var _api_id: Number;
+	private var _api_test_mode: Number = 0;
     private var _api_secret: String;
     private var _viewer_id: Number;
     private var _request_params: Array;
@@ -27,11 +26,13 @@
 	private var _timer:Timer;// таймер отправки запросов из очереди
 	private var _lastRequestCount:uint = 0;
     
-    public function DataProvider(api_url: String, api_id: Number, api_sid: String, api_secret: String, viewer_id: Number) {
+    public function DataProvider(api_url: String, api_id: Number, api_secret: String, viewer_id: Number, api_test_mode: Number) {
 	  _api_secret = api_secret;
-	  _api_sid	  = api_sid;
 	  _api_url	  = api_url;
 	  _api_id     = api_id;
+	  if (api_test_mode) {
+		  _api_test_mode  = api_test_mode;  
+	  }
       _viewer_id  = viewer_id;
     }
     
@@ -137,7 +138,7 @@
       request_params.format = "JSON";
 	  
 	  // TODO: снять коммент в боевой версии!!!
-	  request_params.test_mode = 1;
+	  request_params.test_mode = _api_test_mode;
 	  
 	  
 	  request_params.v = "3.0";
@@ -152,7 +153,6 @@
         variables[j] = request_params[j];
       }
       variables['sig'] = _generate_signature(request_params);
-      variables['sid'] = _api_sid;
       var request:URLRequest = new URLRequest();
       request.url = _api_url;
       request.method = URLRequestMethod.POST;
