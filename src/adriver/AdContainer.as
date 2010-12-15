@@ -114,9 +114,12 @@
 		
 		private function clean_container():void {
 			
-			duration_timer.removeEventListener(TimerEvent.TIMER, onTick);
-			duration_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete);
-			skip_timer.removeEventListener(TimerEvent.TIMER, onSkipTimer);
+			if(parameters.max_duration>0) {
+				duration_timer.removeEventListener(TimerEvent.TIMER, onTick);
+				duration_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete);
+				skip_timer.removeEventListener(TimerEvent.TIMER, onSkipTimer);
+				}
+				
 			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
 			if (stream) {
 				stream.close();
@@ -156,7 +159,9 @@
 			addChild(loader);
 			sendStarted();
 			//sendPixels();
-			show_duration();
+			if(parameters.max_duration>0) {
+				show_duration();
+			}
 			
 		}
 		
@@ -182,7 +187,9 @@
 			}
 			sendStarted();
 			//sendPixels();
-			show_duration();
+			if(parameters.max_duration>0) {
+				show_duration();
+			}
 		}
 		
 		private function configureListeners(dispatcher:IEventDispatcher):void {
