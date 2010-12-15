@@ -1,4 +1,4 @@
-package vkontakte.vk.api {
+﻿package vkontakte.vk.api {
   
   import flash.net.*;
   import flash.errors.*;
@@ -7,7 +7,7 @@ package vkontakte.vk.api {
   import flash.events.TimerEvent;
   
   import vkontakte.vk.api.serialization.json.*;
-  import com.junkbyte.console.Cc;
+//  import com.junkbyte.console.Cc;
   
   public class DataProvider {    
 	private var _api_sid: String;
@@ -136,7 +136,7 @@ package vkontakte.vk.api {
       request_params.api_id = _api_id;
       request_params.format = "JSON";
 	  
-	  // TO DO: снять коммент в боевой версии!!!
+	  // TODO: снять коммент в боевой версии!!!
 	  request_params.test_mode = 1;
 	  
 	  
@@ -196,7 +196,7 @@ package vkontakte.vk.api {
         loader.load(request);
       }
       catch (error:Error) {
-		Cc.info(String(error));
+//		Cc.info(String(error));
 		obj.options.onError(error);
       }
     }
