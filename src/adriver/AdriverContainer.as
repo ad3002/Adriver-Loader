@@ -172,7 +172,7 @@
 				parameters.skip_button.y = video.height - parameters.skip_button.height;
 				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
 			}
-			
+
 			if(parameters.max_duration>0) {
 				show_duration();
 			}
