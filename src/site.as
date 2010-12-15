@@ -33,40 +33,70 @@
 			
 			init_debbuger();
 			
+			var YOUR_SITE_ID_IN_ADRIVER:Number = 103134;
+			
 			parameters = {
-//				social_network: "vkontakte",
-//				vk_secret: "JNi8W1YXui",
+				// what social network to query for user data. 
+				// currently only vkontakte is supported. 
+				// can be commented out if you don't want module to perform query or 
+				// want to supply information yourself 
+				// 
+				social_network: "vkontakte",
+				
+				// api id
+				api_id: 5422,
+				
+				// vkontakte secret key of application, found in settings
+				api_secret: "oKSLmbER5H",
+				
+				// when debugging vkontakte application locally, use test mode
+				api_test_mode: 1,
+		
+				// type of advertisement 
+				// currently only "pregame" 
 				ad_type: "pregame",
+		
+				// skip button settings
+				// actual button		
 				skip_button: sb,
+				// label
 				skip_button_label: "Skip",
+				// how quickly it can be activated (in seconds) 
 				skip_button_timeout: 0,
-				max_duration: 10,
+				
+				// advertisement duration limit in seconds
+				// it auto-skips the ad when timer is reached
+				max_duration: 0,
+				
+				// user information
 				user: {
-					uid: 1,
+					// sex of user. 2 is male. 1 is female
 					sex: 2,
+					// birth date in "YYYY-MM-DD" format
+					bdate: "1917-01-09",
+					// unique user identificator
+					uid: 1,
+					// city name. lowercase
 					city_name: "st.petersburg",
-					country_name: "russia",
-					bdate: "1917-01-09"
+					// country name. lowercase
+					country_name: "russia"
 				},
+				
+				// style parameters
 				style: {
 					width: stage.width,
 					height: stage.height
 				},				
+				
+				// adriver parameters
 				adriver: {
-					// image 
-					// sid: 103134
-
-					// flv video
-					 sid: 103134,
-					 ad: 131439
-					
-					// swf banner
-					// sid: 1,
-					// ad: 217104,
-					// bid: 783234
+					// your site id in adriver
+					// mandatory
+					sid: YOUR_SITE_ID_IN_ADRIVER
 				},
+				
+				// debug function
 				debug: debug
-				//onAdSkipped: onAdSkipped
 			};
 			
 			// bring skip buttom to front
@@ -78,8 +108,12 @@
 					debug("App hasn't wrapper");
 					parameters["vkontakte_hasWrapper"] = false;
 					parameters["flashVars"] = stage.loaderInfo.parameters as Object;
+
 					if (!parameters["flashVars"]["viewer_id"]) {
-						parameters["flashVars"]["viewer_id"] = 0;	
+						parameters["flashVars"]["viewer_id"] = 1;	
+						parameters["flashVars"]["api_id"] = parameters.api_id;
+						parameters["flashVars"]["api_secret"] = parameters.api_secret;
+						parameters["flashVars"]["api_test_mode"] = parameters.api_test_mode;
 					}
 				} else {
 					debug("App has wrapper");
@@ -109,7 +143,7 @@
 		}
 		
 		private function onUserInfoFull(obj:Object):void {	
-			debug("Recive VK user info");	
+			debug("Receive VK user info");	
 			parameters.user = obj;
 
 			debug('\nFINAL PARAMETERS:\n');
@@ -129,7 +163,7 @@
 		}
 		
 		private function onUserInfoEmpty():void {
-			debug("Don't recive VK user info");	
+			debug("Don't receive VK user info");	
 			debug('\nFINAL PARAMETERS:\n');
 			for (var i in parameters)
 			{
