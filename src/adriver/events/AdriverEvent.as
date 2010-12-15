@@ -1,4 +1,4 @@
-package adriver.events
+﻿package adriver.events
 {
 	import flash.events.Event;
 	
@@ -12,6 +12,14 @@ package adriver.events
 		public static const LOADED:String = "loaded;"
 		public static const SKIPPED:String = "skipped";
 		public static const PROGRESS:String = "progress";
+		
+		public static const EventMap = {
+			STARTED: 0,
+			FINISHED: 1,
+			SKIPPED: 2,
+			LIMITED: 3,
+			FAILED: 9
+		}
 		
 		public function AdriverEvent(type:String)
 		{

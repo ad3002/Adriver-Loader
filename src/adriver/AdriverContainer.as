@@ -108,7 +108,8 @@
 			}
 			
 			clean_container();
-			
+			sendEvent(AdriverEvent.LIMITED);
+
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LIMITED));
 		}
 		
@@ -136,6 +137,8 @@
 		{
 			parameters.debug("Skip button clicked in container");
 			clean_container();
+			sendEvent(AdriverEvent.SKIPPED);
+
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
@@ -143,6 +146,8 @@
 		{
 			parameters.debug("Skip button clicked in container");
 			clean_container();
+			sendEvent(AdriverEvent.SKIPPED);
+
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.SKIPPED));
 		}
 		
@@ -157,7 +162,7 @@
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
-			sendStarted();
+			sendEvent(AdriverEvent.STARTED);
 			//sendPixels();
 			if(parameters.max_duration>0) {
 				show_duration();
@@ -185,7 +190,7 @@
 				parameters.skip_button.y = video.height - parameters.skip_button.height;
 				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
 			}
-			sendStarted();
+			sendEvent(AdriverEvent.STARTED);
 			//sendPixels();
 			if(parameters.max_duration>0) {
 				show_duration();
@@ -202,11 +207,11 @@
 			dispatcher.addEventListener(Event.UNLOAD, unLoadHandler);
 		}
 		
-		private function sendStarted():void {
+		private function sendEvent(event:String):void {
 
 			if (parameters.eventUrl) {
-				parameters.debug("Complete handler, loading event0");
-				var request:URLRequest = new URLRequest(parameters.eventUrl+"0");
+				parameters.debug("Logging adriver event: " +event);
+				var request:URLRequest = new URLRequest(parameters.eventUrl+AdriverEvent.EventMap[event]);
 				var loader:URLLoader = new URLLoader();
 				loader.load(request);				
 			}
@@ -269,15 +274,18 @@
 				case "NetStream.Play.StreamNotFound":
 					parameters.debug("..Unable to locate video: " + _video_url);
 					clean_container();
+					sendEvent(AdriverEvent.FAILED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 					break;
 				case "NetStream.Play.Failed":
 					parameters.debug("Play failed: " + _video_url);
 					clean_container();
+					sendEvent(AdriverEvent.FAILED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 				case "NetStream.Play.Stop":
 					clean_container();
 					parameters.debug("Play finished: " + _video_url);
+					sendEvent(AdriverEvent.FINISHED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));
 //				case "NetStream.Play.Switch":
 //					parameters.debug("Play switched: " + _video_url);
@@ -288,6 +296,7 @@
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			parameters.debug("securityErrorHandler: " + event);
 			clean_container();
+			sendEvent(AdriverEvent.FAILED);
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 		}
 		
