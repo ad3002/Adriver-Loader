@@ -4,7 +4,6 @@
 	
 	public class AdriverEvent extends Event
 	{
-		public static const GET_PREROLL_LINK:String = "get_link";
 		public static const STARTED:String = "started";
 		public static const FINISHED:String = "finished";
 		public static const LIMITED:String = "limited";
@@ -13,14 +12,20 @@
 		public static const SKIPPED:String = "skipped";
 		public static const PROGRESS:String = "progress";
 		
-		public static const EventMap = {
-			STARTED: 0,
-			FINISHED: 1,
-			SKIPPED: 2,
-			LIMITED: 3,
-			FAILED: 9
+		public static const EventMapO:Object = new Object()
+		
+		{
+			EventMapO[STARTED] = 0;
+			EventMapO[FINISHED] = 1;
+			EventMapO[SKIPPED] = 2;
+			EventMapO[LIMITED] = 3;
+			EventMapO[FAILED] = 9;
 		}
 		
+		public static function EventMap(type:String):Number {
+			return (EventMapO[type]);
+		}
+
 		public function AdriverEvent(type:String)
 		{
 			super(type);

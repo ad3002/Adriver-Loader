@@ -192,8 +192,8 @@
 		private function sendEvent(event:String):void
 		{
 			if (parameters.eventUrl) {
-				parameters.debug("AD: Logging adriver event: " +event);
-				var request:URLRequest = new URLRequest(parameters.eventUrl+AdriverEvent.EventMap[event]);
+				parameters.debug("AD: Logging adriver event: " +event+"="+AdriverEvent.EventMap(event));												
+				var request:URLRequest = new URLRequest(parameters.eventUrl+AdriverEvent.EventMap(event));
 				var loader:URLLoader = new URLLoader();
 				loader.load(request);				
 			}
