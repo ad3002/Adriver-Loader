@@ -7,12 +7,14 @@
 	public class AdriverVK extends EventDispatcher
 	{
 		private var vk_parameters:Object;
+		private var parameters:Object;
 		private var callbackComplete:Function;
 		private var callbackError:Function;
 
 		public function init(app_parameters:Object):void 
 		{
-			vk_parameters = app_parameters;
+			parameters = app_parameters;
+			vk_parameters = parameters.flashVars;
 		}
 		
 		public function commandGetProfiles(aCallbackComplete:Function, aCallbackError:Function):void 
@@ -32,8 +34,7 @@
 				"city_name": city_name,\
 				"country_name": country_name\
 				};';
-				
-						
+
 			callbackComplete = aCallbackComplete;
 			callbackError = aCallbackError;
 			api.api("execute", {code: executeCode}, onSuccess, onError);
@@ -41,6 +42,8 @@
 		
 		private function onSuccess(response:Object):void 
 		{
+//			trace("Success", response);
+			
 			if (response.bdate == null) {
 				response.bdate = '0.0.0';
 			}
@@ -54,6 +57,8 @@
 		private function onError(error:Object):void 
 		{
 //			trace("Error", error);
+
+			parameters.debug("error "+error.error_msg);
 			callbackError();
 		}
 		
