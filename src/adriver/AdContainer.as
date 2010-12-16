@@ -193,9 +193,9 @@
 		{
 			if (parameters.eventUrl) {
 				parameters.debug("AD: Logging adriver event: " +event);
-				var request:URLRequest = new URLRequest(parameters.eventUrl+AdriverEvent.EventMap[event]);
-				var loader:URLLoader = new URLLoader();
-				loader.load(request);				
+				//var request:URLRequest = new URLRequest(parameters.eventUrl+AdriverEvent.EventMap[event]);
+//				var loader:URLLoader = new URLLoader();
+//				loader.load(request);				
 			}
 		}
 		
@@ -279,10 +279,10 @@
 					parameters.debug("AD: Play finished: " + _video_url);
 					sendEvent(AdriverEvent.FINISHED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));
-				default:
-					parameters.debug("AD: Play failed. Unknown event: " + event.info.code)
-					sendEvent(AdriverEvent.FAILED);
-					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
+//				default:
+//					parameters.debug("AD: Play failed. Unknown event: " + event.info.code)
+//					sendEvent(AdriverEvent.FAILED);
+//					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 			}
 		}
 		
