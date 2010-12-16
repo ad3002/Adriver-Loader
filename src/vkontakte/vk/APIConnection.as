@@ -29,7 +29,8 @@ package vkontakte.vk {
 	    connectionName = params[0].social_network;
 		var api_url: String = 'http://api.vkontakte.ru/api.php';
 		if (params[0].api_url) api_url = params[0].api_url;
-		dp = new DataProvider(api_url, params[0].api_id, params[0].api_secret, params[0].viewer_id, params[0].api_test_mode);
+		dp = new DataProvider(api_url, params[0].api_id, params[0].sid, params[0].secret, params[0].viewer_id);
+		
 	  }
 	  if (!connectionName) return;
 	  pendingRequests = new Array();

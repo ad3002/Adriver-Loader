@@ -1,8 +1,10 @@
 ﻿package
 {
-	import adriver.*
-	import adriver.events.*
+	import adriver.*;
+	import adriver.events.*;
+	
 	import fl.controls.TextArea;
+	
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -40,10 +42,10 @@
 				social_network: "vkontakte",
 				
 				// api id
-				api_id: 5422,
+				api_id: 2030957,
 				
 				// vkontakte secret key of application, found in settings
-				api_secret: "oKSLmbER5H",
+				api_secret: "JNi8W1YXui",
 				
 				// when debugging vkontakte application locally, use test mode
 				api_test_mode: 1,
@@ -92,6 +94,7 @@
 			this.setChildIndex(sb, numChildren-1);
 			
 			if (parameters.social_network == 'vkontakte') {
+				
 				var vkontakte_wrapper: Object = Object(parent.parent); 
 				
 				if (!vkontakte_wrapper.application) {
@@ -100,12 +103,13 @@
 					parameters["flashVars"] = stage.loaderInfo.parameters as Object;
 
 					if (!parameters["flashVars"]["viewer_id"]) {
-						parameters["flashVars"]["viewer_id"] = 1;	
+						parameters["flashVars"]["viewer_id"] = 88984;	
 						parameters["flashVars"]["api_id"] = parameters.api_id;
 						parameters["flashVars"]["api_secret"] = parameters.api_secret;
 						parameters["flashVars"]["api_test_mode"] = parameters.api_test_mode;
 					}
 				} 
+				
 				else {
 					debug("APP: App has vkontakte wrapper");
 					parameters["vkontakte_hasWrapper"] = true;
@@ -122,6 +126,18 @@
 		
 		private function load_user_params():void 
 		{
+			debug("FlashVars api id: " + parameters.flashVars.api_id);
+			debug("FlashVars secret: " + parameters.flashVars.api_secret);
+			debug("FlashVars viewer: " + parameters.flashVars.viewer_id);
+			debug("FlashVars test: " + parameters.flashVars.api_test_mode);
+			
+			debug('\nFINAL PARAMETERS:\n');
+			for (var i in parameters.flashVars)
+			{
+				debug(String(i+': '+parameters.flashVars[i]));
+			}
+			debug('\n');
+			
 			var module_vk:AdriverVK = new AdriverVK();
 			module_vk.init(parameters.flashVars);
 			module_vk.commandGetProfiles(onUserInfoFull, onUserInfoEmpty);
