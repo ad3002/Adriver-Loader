@@ -98,20 +98,20 @@
 				var vkontakte_wrapper: Object = Object(parent.parent); 
 				
 				if (!vkontakte_wrapper.application) {
-					debug("APP: App has no vkontakte wrapper");
+					debug("APP: App has no vkontakte wrapper. test mode = " + parameters.api_test_mode);
 					parameters["vkontakte_hasWrapper"] = false;
 					parameters["flashVars"] = stage.loaderInfo.parameters as Object;
 
 					if (!parameters["flashVars"]["viewer_id"]) {
 						parameters["flashVars"]["viewer_id"] = 88984;	
 						parameters["flashVars"]["api_id"] = parameters.api_id;
-						parameters["flashVars"]["api_secret"] = parameters.api_secret;
+						parameters["flashVars"]["secret"] = parameters.api_secret;
 						parameters["flashVars"]["api_test_mode"] = parameters.api_test_mode;
 					}
 				} 
 				
 				else {
-					debug("APP: App has vkontakte wrapper");
+					debug("APP: App has vkontakte wrapper. test mode = " + parameters.api_test_mode);
 					parameters["vkontakte_hasWrapper"] = true;
 					parameters["vkontakte_wrapper"] = vkontakte_wrapper;
 					parameters["flashVars"] = vkontakte_wrapper.application.parameters;
@@ -139,7 +139,7 @@
 			debug('\n');
 			
 			var module_vk:AdriverVK = new AdriverVK();
-			module_vk.init(parameters.flashVars);
+			module_vk.init(parameters);
 			module_vk.commandGetProfiles(onUserInfoFull, onUserInfoEmpty);
 		}
 		
