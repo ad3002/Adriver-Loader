@@ -279,10 +279,10 @@
 					parameters.debug("AD: Play finished: " + _video_url);
 					sendEvent(AdriverEvent.FINISHED);
 					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));
-				default:
-					parameters.debug("AD: Play failed. Unknown event: " + event.info.code)
-					sendEvent(AdriverEvent.FAILED);
-					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
+//				default:
+//					parameters.debug("AD: Play failed. Unknown event: " + event.info.code)
+//					sendEvent(AdriverEvent.FAILED);
+//					_parent.dispatchEvent(new AdriverEvent(AdriverEvent.FAILED));
 			}
 		}
 		
