@@ -85,7 +85,7 @@
 			} 
 			
 			//parameters.adriver_url = ADRIVER_URL + adriverParms;
-			//parameters.debug("LOADER: XML url: "+parameters.adriver_url);
+			parameters.debug("LOADER: XML url: "+ADRIVER_URL + adriverParms);
 			var xml_loader:AdriverGetObjectFromXML = new AdriverGetObjectFromXML(parameters.debug);
 			xml_loader.addEventListener(AdriverXMLEvent.SUCCESS, onScenarioXMLLoad);
 			xml_loader.addEventListener(AdriverXMLEvent.ERROR, onScenarioXMLError);
@@ -127,7 +127,7 @@
 				}			
 				else if (swf_url) {
 					parameters.debug("LOADER: Trying to add a swf: "+swf_url);
-					ad_cont.loadBanner(swf_url, 0, 0)
+					ad_cont.loadBanner(swf_url + '?link1=' + obj.ar_cgihref, 0, 0)
 				}
 				ad_cont.addEventListener(AdriverEvent.STARTED, sendPixels);
 			}
