@@ -1,6 +1,8 @@
 ﻿package adriver
 {
 	import adriver.events.AdriverEvent;
+	
+	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.SimpleButton;
@@ -56,22 +58,14 @@
 		private var duration_timer:Timer;
 		private var skip_timer:Timer;
 		
+		private var loaders:Object = [];
+		
+		
 		public function AdContainer(given_parameters:Object, mc)
 		{
 			super();
 			parameters = given_parameters;
 			_parent = mc;
-			
-			if (parameters.skip_button) {
-				parameters.skip_button.enabled = false;
-				
-				parameters.skip_button.x = -1000;
-				parameters.skip_button.y = 0;
-				
-				skip_timer = new Timer(parameters.skip_button_timeout*1000, 1);
-				skip_timer.addEventListener(TimerEvent.TIMER, onSkipTimer);
-				skip_timer.start();
-			}
 		}
 		
 		private function onSkipTimer(event:TimerEvent):void {
@@ -113,12 +107,47 @@
 				duration_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onAdTimerComplete);
 				skip_timer.removeEventListener(TimerEvent.TIMER, onSkipTimer);
 				}
-				
-			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
-			
+
 			if (stream) {
 				stream.close();
 			}
+			
+			for each (var obj:DisplayObject in loaders) {
+				this.removeChild(obj);
+			}
+			
+			parameters.skip_button.removeEventListener(MouseEvent.CLICK, onSkipClick);
+			if (parameters.skip_button) {
+				parameters.skip_button.parent.removeChild(parameters.skip_button);
+			}
+		}
+		
+		private function prepare_container(aWidth:int, aHeight:int):void {
+			
+			if (parameters.skip_button) {
+				parameters.skip_button.enabled = false;
+				
+				parameters.skip_button.x = -1000;
+				parameters.skip_button.y = 0;
+				
+				skip_timer = new Timer(parameters.skip_button_timeout*1000, 1);
+				skip_timer.addEventListener(TimerEvent.TIMER, onSkipTimer);
+				skip_timer.start();
+			}
+			
+			if (parameters.skip_button) {
+				parameters.debug("AD: Button showed");
+				parameters.skip_button.x = aWidth - parameters.skip_button.width;
+				parameters.skip_button.y = aHeight - parameters.skip_button.height;
+				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
+			}
+			
+			if(parameters.max_duration > 0) {
+				show_duration();
+			}
+			
+			parameters.skip_button.parent.setChildIndex(parameters.skip_button, parameters.skip_button.parent.numChildren-1);
+			
 		}
 		
 		private function onSkipClick(event:MouseEvent):void
@@ -147,11 +176,10 @@
 			loader.x = x;
 			loader.y = y;
 			addChild(loader);
-			sendEvent(AdriverEvent.STARTED);
 			
-			if(parameters.max_duration>0) {
-				show_duration();
-			}
+			loaders.push(loader);
+			
+			sendEvent(AdriverEvent.STARTED);
 		}
 		
 		private function connectStream():void 
@@ -164,18 +192,12 @@
 			video.attachNetStream(stream);
 			stream.play(_video_url);
 			addChild(video);
+			
+			loaders.push(video);
+			
 			parameters.debug("AD: ..video size: "+video.width+"x"+video.height);
 			
-			if (parameters.skip_button) {
-				parameters.debug("AD: Button showed");
-				parameters.skip_button.x = video.width - parameters.skip_button.width;
-				parameters.skip_button.y = video.height - parameters.skip_button.height;
-				parameters.skip_button.addEventListener(MouseEvent.CLICK, onVideoSkipClick);
-			}
-
-			if(parameters.max_duration>0) {
-				show_duration();
-			}
+			prepare_container(video.width, video.height);
 		}
 		
 		private function configureListeners(dispatcher:IEventDispatcher):void 
@@ -203,12 +225,7 @@
 		{
 			//trace("completeHandler: " + event + "\n");
 			_parent.dispatchEvent(new AdriverEvent(AdriverEvent.LOADED));
-			
-			if (parameters.skip_button) {
-				parameters.skip_button.x = event.target.width;
-				parameters.skip_button.y = event.target.height - parameters.skip_button.height;
-				parameters.skip_button.addEventListener(MouseEvent.CLICK, onSkipClick);
-			}
+			prepare_container(event.target.width, event.target.height);
 		}
 		
 		private function httpStatusHandler(event:HTTPStatusEvent):void 
