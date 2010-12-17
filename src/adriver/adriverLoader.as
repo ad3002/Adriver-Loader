@@ -17,6 +17,7 @@
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.external.ExternalInterface;
+	import flash.system.Capabilities;
 
 	public class adriverLoader extends Sprite
 	{
@@ -56,6 +57,7 @@
 			var param_custom:String;
 			var now:Number = new Date().getFullYear();
 			custom_list[255] = this.VERSION;
+			custom_list[254] = Capabilities.version;
 			custom_list[100] = parameters.user.sex ? parameters.user.sex == 2 ? 'm' : 'f' : null;
 			custom_list[101] = now - (parseInt(('' + parameters.user.bdate).split('.').pop()) || now);
 			custom_list[10] = parameters.user.city_name;
@@ -75,7 +77,6 @@
 			
 			b.push("bt=54");
 			b.push("rnd="+Math.round(Math.random()*100000000));
-			b.push("ref=http://vkontakte.ru/app" + parameters.api_id);
 			adriverParms = b.join('&');
 			var adriver_parameters:String;
 
@@ -84,7 +85,7 @@
 			} 
 			
 			//parameters.adriver_url = ADRIVER_URL + adriverParms;
-			//parameters.debug("LOADER: XML url: "+parameters.adriver_url);
+			parameters.debug("LOADER: XML url: "+ADRIVER_URL + adriverParms);
 			var xml_loader:AdriverGetObjectFromXML = new AdriverGetObjectFromXML(parameters.debug);
 			xml_loader.addEventListener(AdriverXMLEvent.SUCCESS, onScenarioXMLLoad);
 			xml_loader.addEventListener(AdriverXMLEvent.ERROR, onScenarioXMLError);
@@ -126,7 +127,7 @@
 				}			
 				else if (swf_url) {
 					parameters.debug("LOADER: Trying to add a swf: "+swf_url);
-					ad_cont.loadBanner(swf_url, 0, 0)
+					ad_cont.loadBanner(swf_url + '?link1=' + obj.ar_cgihref, 0, 0)
 				}
 				ad_cont.addEventListener(AdriverEvent.STARTED, sendPixels);
 			}
