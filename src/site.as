@@ -31,7 +31,9 @@
 				adriver: {
 					// your site id in adriver
 					// mandatory
-					sid: YOUR_SITE_ID_IN_ADRIVER
+					sid: 168077,
+					bid: 1023980,
+					ad: 259100
 				},
 				
 				// what social network to query for user data. 
@@ -56,7 +58,7 @@
 		
 				// skip button settings
 				// actual button		
-				skip_button: sb,
+				skip_button: true,
 				// label
 				skip_button_label: "Skip",
 				// how quickly it can be activated (in seconds) 
@@ -64,7 +66,7 @@
 				
 				// advertisement duration limit in seconds
 				// it auto-skips the ad when timer is reached
-				max_duration: 0,
+				max_duration: 12,
 				
 				// user information
 				user: {
@@ -90,9 +92,6 @@
 				debug: debug
 			};
 			
-			// bring skip buttom to front
-			this.setChildIndex(sb, numChildren-1);
-			
 			if (parameters.social_network == 'vkontakte') {
 				
 				var vkontakte_wrapper: Object = Object(parent.parent); 
@@ -103,7 +102,7 @@
 					parameters["flashVars"] = stage.loaderInfo.parameters as Object;
 
 					if (!parameters["flashVars"]["viewer_id"]) {
-						parameters["flashVars"]["viewer_id"] = 88984;	
+						parameters["flashVars"]["viewer_id"] = "88984";	
 						parameters["flashVars"]["api_id"] = parameters.api_id;
 						parameters["flashVars"]["secret"] = parameters.api_secret;
 						parameters["flashVars"]["api_test_mode"] = parameters.api_test_mode;
@@ -160,7 +159,7 @@
 		{
 			show_dark_glass();
 			this.setChildIndex(mc_with_ad, this.numChildren-1);
-			this.setChildIndex(sb, this.numChildren-1);
+			
 			// initialising adriver module with external movie clip object and parameters
 			var ad:adriverLoader = new adriverLoader(mc_with_ad, parameters);
 			ad.addEventListener(AdriverEvent.STARTED, onAdStarted);
@@ -192,7 +191,6 @@
 			// remove ad container
 			removeChild(mc_with_ad);
 			// remove skip button
-			removeChild(sb);
 			remove_dark_glass();
 			// show app content
 			_content.x = 0;
