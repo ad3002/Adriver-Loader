@@ -5,6 +5,7 @@
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.AsyncErrorEvent;
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
@@ -64,6 +65,8 @@
 		private var skip_button:VKButton;
 		
 		public var isAdMount:Boolean;
+		
+		private var glass_container:Sprite;
 		
 		public function AdContainer(given_parameters:Object, mc)
 		{
@@ -130,9 +133,19 @@
 			}
 			
 			isAdMount = false;
+			
+			if (parameters.prevent_inner_clicks) {
+				remove_glass();
+			}		
 		}
 		
 		private function prepare_container(aWidth:int, aHeight:int):void {
+			
+			if (parameters.prevent_inner_clicks) {
+				add_glass(this.width, this.height);	
+			}
+			
+			
 			
 			if (parameters.skip_button) {
 				
@@ -319,6 +332,19 @@
 		
 		private function asyncErrorHandler(event:AsyncErrorEvent):void {
 			parameters.debug("AD: securityAsyncErrorEvent: " + event);
-		}	
+		}
+		
+		private function add_glass(aWidth:int, aHeight:int):void {
+			glass_container = new Sprite();
+			addChild(glass_container);
+			glass_container.graphics.beginFill( 0x000000, 0 );
+			glass_container.graphics.drawRect( 0, 0, aWidth, aHeight);
+			glass_container.graphics.endFill();
+			this.setChildIndex(glass_container, this.numChildren-1);
+		}
+		
+		private function remove_glass():void {
+			removeChild(glass_container);
+		}
 	}
 }

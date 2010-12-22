@@ -88,6 +88,11 @@
 					height: stage.height
 				},				
 				
+				// TODO: to place this param in adriver XML
+				
+				prevent_inner_clicks: true,
+				
+				
 				// debug function
 				debug: debug
 			};

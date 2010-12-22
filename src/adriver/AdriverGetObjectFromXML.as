@@ -52,6 +52,7 @@
 				url = this.ar_cgihref + '&rleurl=' + escape(url || '');
 				_debug("XML: navigating to URL: "+url);
 				navigateToURL(new URLRequest(url), '_blank');
+				
 			} catch (error:Error) {
 				dispatchEvent(new AdriverXMLEvent(AdriverXMLEvent.ERROR, error));
 			}

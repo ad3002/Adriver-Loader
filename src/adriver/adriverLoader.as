@@ -139,11 +139,15 @@
 		public function onAdClick(event:MouseEvent):void {
 			parameters.debug("LOADER: Ad clicked in loader ");
 			
+			obj.makeClick();
+			
 			if (ad_cont.isAdMount) {
 				ad_cont.clean_container();
 			}
 			
-			obj.makeClick();
+			this.dispatchEvent(new AdriverEvent(AdriverEvent.FINISHED));
+			
+			
 		}
 		
 		private function sendPixels():void
